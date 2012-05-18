@@ -108,6 +108,7 @@ BOOL register_timer_irq_hook(struct TimerDevice* dev,u32 timeout_us,timer_irq_ca
 BOOL unregister_timer_irq_hook(struct TimerDevice* dev);
 void   timer_device_enable(struct TimerDevice* dev,BOOL enable);
 //=======================================
+BOOL start_sys_timer(void);
 u32 	 timer_num(struct TimerDevice* dev);
 TID 	create_timer(struct TimerDevice* dev, u32 timeout_us,TIME_OUT_PROC timer_cb, void* arg,u8 flag);
 BOOL    timer_reset(TID timer);

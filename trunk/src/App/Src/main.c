@@ -31,7 +31,7 @@ int main(void)
 #if 0
 	net_work_test();
 #endif
-	nvic_init();
+	BSP_Init();
 	InitSystem();
 	if(!SysClockCheck()){
 		DebugPf("System Check Failed\r\n");
@@ -58,9 +58,7 @@ static bool SysClockCheck(void)
 //Æô¶¯ÈÎÎñ============================================================================
 void StartJob(void ) 
 {
-		
-	struct TimerDevice* dev = request_timer(1);
-	timer_device_enable(dev,true);
+	start_sys_timer();
 	while(1)
 	{
 		timer_srv();
