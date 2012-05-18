@@ -33,7 +33,7 @@ typedef enum{
 	INDEX_UART2,
 	INDEX_UART3,
 	INDEX_UART4,
-	INDEX_MAX=0,
+	INDEX_MAX,
 }SERIAL_INDEX;
 static BOOL request_irq(int irq);
 static TSerialDesc defdesc = {
