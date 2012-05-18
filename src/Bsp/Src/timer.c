@@ -238,7 +238,14 @@ void do_timer(struct TimerDevice* dev)
 	}
 	dev->irq_flag = 1;
 }
+BOOL start_sys_timer(void)
+{
+	struct TimerDevice* dev = request_timer(1);
+	timer_device_enable(dev,true);
 
+	return (dev!=NULL);
+
+}
 static int timer_init(void)
 {
 	memset(timer_dev_list, 0, ARRAY_SIZE(timer_dev_list));

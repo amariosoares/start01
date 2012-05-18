@@ -2,6 +2,7 @@
 #include "led.h"
 #include "clock.h"
 #include "timer.h"
+#include "debugcomm.h"
 #include <ctype.h>
 #if (TEST_MODULE_EN > 0)
 const char send_text[] = {0xab,0xcd,0,1,2,3,4};

@@ -28,7 +28,13 @@ void debug_ll_init(void)
 #if (DEVICE_STM32_UART_EN > 0)
 
 #define MAX_USART_NUM 	5
-
+typedef enum{
+	INDEX_UART1=0,
+	INDEX_UART2,
+	INDEX_UART3,
+	INDEX_UART4,
+	INDEX_MAX=0,
+}SERIAL_INDEX;
 static BOOL request_irq(int irq);
 static TSerialDesc defdesc = {
 	.baudrate  = B115200,
@@ -68,7 +74,7 @@ typedef struct{
 //static struct TSerialDevice serdev[MAX_USART_NUM];
 static u32 stm32_uart_getstring(struct TSerialDevice* dev, u8* data, u32 len, s32 timeout_ms);
 static STM32_USART_DESC stm32_usart[] = {
-		{
+		[INDEX_UART1]={
 			.usart  	= USART1,
 			.uart_id       = 1,
 			.gpio 		= {GPIOA,GPIOA},
@@ -81,7 +87,7 @@ static STM32_USART_DESC stm32_usart[] = {
 			.dma_base   = USART1_BASE + 4,
 			.timeout_us = ((1000000/(115200/3)) * 10),	//接收超时量	秒/波特率/10*3个字/20us TIM2的计数频率
 		},
-		{
+		[INDEX_UART2]={
 			.usart  	= USART2,
 			.uart_id       = 2,
 			.gpio 		= {GPIOD,GPIOD},
@@ -99,8 +105,21 @@ static STM32_USART_DESC stm32_usart[] = {
 			.dma_base   = USART2_BASE + 4,
 			.timeout_us = ((1000000/(115200/3)) * 10),	//接收超时量	秒/波特率/10*3个字/20us TIM2的计数频率
 		},
+		[INDEX_UART3]={
+			.usart  	= USART3,
+			.uart_id       = 3,
+			.gpio 	= {GPIOB,GPIOB},
+			.dma    	= DMA1_Channel4,
+			.pin_rx 	= GPIO_Pin_11,
+			.pin_tx 	= GPIO_Pin_10,	
+			.pin_remap  = 0,
+			.irq		= USART3_IRQn,
+			.dma_irq	= DMA1_Channel4_IRQn,
+			.dma_base   = USART3_BASE + 4,
+			.timeout_us = ((1000000/(115200/3)) * 10),	//接收超时量	秒/波特率/10*3个字/20us TIM2的计数频率
+		},
 #if 1
-		{
+		[INDEX_UART4]={
 			.usart  	= UART4,
 			.uart_id       = 4,
 			.gpio 	= {GPIOC,GPIOC},
@@ -368,24 +387,26 @@ void usart_irq_route(STM32_USART_DESC* stm32uart)
 }
 void USART1_IRQHandler(void)
 {
-	usart_irq_route(&stm32_usart[0]);
+	usart_irq_route(&stm32_usart[INDEX_UART1]);
 }
 			  
 void USART2_IRQHandler(void)
 {
-	usart_irq_route(&stm32_usart[1]);	
+	usart_irq_route(&stm32_usart[INDEX_UART2]);	
 }
+void USART3_IRQHandler(void)
+{
+	usart_irq_route(&stm32_usart[INDEX_UART3]);	
+}
+
 void UART4_IRQHandler(void)
 {
-	usart_irq_route(&stm32_usart[2]);
+	usart_irq_route(&stm32_usart[INDEX_UART4]);
 }
 
 #if 0
 
-void USART3_IRQHandler(void)
-{
-	usart_irq_route(&stm32_usart[2]);	
-}
+
 
 void UART5_IRQHandler(void)
 {

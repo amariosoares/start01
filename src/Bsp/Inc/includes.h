@@ -26,7 +26,7 @@
 //板级开发包头文件，根据实际用到的板级驱动用户自增减
 //注：此处包含的头文件将决定函数BspInit()中所要选择编译的内容
 #include "bsp.h"
-
+#include "app_cfg.h"
 #define ARRAY_SIZE(arr)		(sizeof(arr) / sizeof((arr)[0]))
 
 #define  DEVICE_PCF8563_EN 	  1
