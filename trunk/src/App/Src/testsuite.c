@@ -85,7 +85,7 @@ static int test_suite_init(void)
 	}
 	check_rtc_exist();
 
-	uart0 = usart_request("ttystm0");
+	uart0 = usart_request("ttystm1");
 	if(uart0){
 		if(usart_open(uart0,&uartx)){
 
