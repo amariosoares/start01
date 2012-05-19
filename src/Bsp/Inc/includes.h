@@ -29,9 +29,8 @@
 #include "app_cfg.h"
 #define ARRAY_SIZE(arr)		(sizeof(arr) / sizeof((arr)[0]))
 
-#define  DEVICE_PCF8563_EN 	  1
+#define  DEVICE_STM32_RTC_EN 	  1
 #define DEVICE_FM25L16_EN  	  1
-#define DEVICE_MEM_STORE_EN      1
 #define DEVICE_STM32_LED_EN       1
 #define DEVICE_STM32_UART_EN   1
 #define DEVICE_NETWORK_EN			1

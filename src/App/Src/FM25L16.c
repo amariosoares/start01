@@ -5,19 +5,19 @@
 #define DEV_NAME "FM25L16"
 static Param_Device dev;
 
-#define FM25L16B_CS_HIGH 			(GPIOD->BSRR = GPIO_Pin_13)
-#define FM25L16B_CS_LOW				(GPIOD->BRR  = GPIO_Pin_13)
+#define FM25L16B_CS_HIGH 			(GPIOA->BSRR = GPIO_Pin_4)
+#define FM25L16B_CS_LOW				(GPIOA->BRR  = GPIO_Pin_4)
 
-#define FM25L16B_SO_HIGH			(GPIOB->BSRR = GPIO_Pin_14)
-#define FM25L16B_SO_LOW				(GPIOB->BRR	= GPIO_Pin_14)
+//#define FM25L16B_SO_HIGH			(GPIOA->BSRR = GPIO_Pin_14)
+//#define FM25L16B_SO_LOW				(GPIOA->BRR	= GPIO_Pin_14)
 
-#define FM25L16B_SI_HIGH			(GPIOB->BSRR = GPIO_Pin_15)
-#define FM25L16B_SI_LOW				(GPIOB->BRR  = GPIO_Pin_15)
+#define FM25L16B_SI_HIGH			(GPIOA->BSRR = GPIO_Pin_7)
+#define FM25L16B_SI_LOW				(GPIOA->BRR  = GPIO_Pin_7)
 
-#define FM25L16B_SCK_HIGH			(GPIOD->BSRR = GPIO_Pin_11)
-#define FM25L16B_SCK_LOW			(GPIOD->BRR  = GPIO_Pin_11)
+#define FM25L16B_SCK_HIGH			(GPIOA->BSRR = GPIO_Pin_5)
+#define FM25L16B_SCK_LOW			(GPIOA->BRR  = GPIO_Pin_5)
 
-#define FM25L16B_SO_Read			GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_14)
+#define FM25L16B_SO_Read			GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_6)
 
 /*********************************************************************************************************
   命令字宏定义 --
@@ -241,8 +241,7 @@ void fm25l6_hard_init(void)
 	
 	GPIO_InitTypeDef GPIO_InitStructure;						/* 定义GPIO结构体 */
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);		//为CS5532 引脚分配时钟
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);		//为CS5532 引脚分配时钟
 			
 	/*
 	 * FM25L16B管脚定义
@@ -251,20 +250,15 @@ void fm25l6_hard_init(void)
 	 *	  SPI2_MISO_A : PB14		Input
 	 *	  SPI2_CS1#_A : PD13		Output
 	 */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_13 ;					
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_5 | GPIO_Pin_7 ;					
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;			/* 设置响应速度为50M */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;			/* 设置引脚为推挽输出 */
-	GPIO_Init(GPIOD, &GPIO_InitStructure);
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;					
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;			/* 设置响应速度为50M */
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;			/* 设置引脚为推挽输出 */
-	GPIO_Init(GPIOB, &GPIO_InitStructure);	
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;					
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;					
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;			/* 设置响应速度为50M */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;				/* 设置引脚为下拉输入 */	
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	
 }
