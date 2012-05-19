@@ -1,7 +1,7 @@
 #include "includes.h"
 #include "watchdog.h"
 #include "timer.h"
-
+#if (WDG_EN > 0)
 #define WDT_B_HIGH	    			(GPIOB->BSRR = GPIO_Pin_1)
 #define WDT_B_LOW					(GPIOB->BRR  = GPIO_Pin_1)
 
@@ -45,4 +45,5 @@ static int watchdog_init(void)
 	
 }
 device_initcall(watchdog_init);
+#endif
 
