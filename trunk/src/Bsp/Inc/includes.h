@@ -33,6 +33,6 @@
 #define DEVICE_FM25L16_EN  	  1
 #define DEVICE_STM32_LED_EN       1
 #define DEVICE_STM32_UART_EN   1
-#define DEVICE_NETWORK_EN			1
+#define DEVICE_NETWORK_EN			0
 #endif
 

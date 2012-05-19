@@ -16,7 +16,8 @@ void StartJob			(void);			//启动任务
 			  
 //======================================【引入变量】==================================
 extern u8 HardFault_Handler_T;	//找错
-void net_work_test()
+#if (DEVICE_NETWORK_EN > 0)
+static void net_work_test()
 {
 	mem_init();
 	network_init();
@@ -24,6 +25,7 @@ void net_work_test()
 		network_srv();
 
 }
+#endif
 //======================================【系统参数】==================================
 //初始化硬件，初始化系统，建立启动任务				
 int main(void)
