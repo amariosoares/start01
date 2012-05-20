@@ -364,7 +364,7 @@ int network_init(void)
 	DEBUG_FUNC();
 
 
-	phy_reset();
+	//phy_reset();
 	/* Setup STM32 system (clocks, Ethernet, GPIO, NVIC) and STM3210C-EVAL resources */
 	if(!System_Setup()){
 		net_init_ok = 0;
@@ -378,6 +378,9 @@ int network_init(void)
 	//return mongoo_start();
 
 	IAP_httpd_init();
+
+	net_init_ok = 1;
+	
 	return 1;
 
 	//RegisterAutoVar(CMD_NET_SEND_AD,1,&udp_send_ad_flag,VAR_UPDATE_MEMORY);

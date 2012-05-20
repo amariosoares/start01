@@ -22,7 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32_eth.h"
 #include "stm32f10x_rcc.h"
-#define CHECK_PHY 1
+#define CHECK_PHY 0
 /** @addtogroup STM32_ETH_Driver
   * @brief ETH driver modules
   * @{
