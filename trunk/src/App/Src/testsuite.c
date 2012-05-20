@@ -38,12 +38,19 @@ static int test_rtc(void)
 }
 static int test_fm25l16(void)
 {
-	DWORD v = 0;
-	Param_WriteInteger(0,0xaa55);
+	static DWORD v = 0;
+	static int addr = 0;
+	Param_WriteInteger(addr%2048,v);
+	printf("addr %d write 0x%x\n",addr%2048,v);
+	
+	
+	v = 0;
+	v = Param_ReadInteger(addr%2048,0);
 
-	v = Param_ReadInteger(0,0);
-
-	printf("write 0xaa55 read %d\n",v);
+	
+	printf("addr %d read 0x%x\n",addr%2048,v);
+	v++;
+	addr++;
 }
 static int test_uart(void)
 {
