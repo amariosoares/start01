@@ -9,6 +9,11 @@
 
 #include <ctype.h>
 #if (TEST_MODULE_EN > 0)
+static struct Param_Device*  fm25l16_dev = NULL;
+static struct Param_Device*  bpk_dev 		= NULL;
+static u32 fm25l16_dev_size = 1;
+static u32 bpk_dev_size = 1;
+
 static struct TSerialDevice* uart0;
 static TSerialDesc uartx={
 	.baudrate=B115200,
@@ -40,15 +45,15 @@ static int test_fm25l16(void)
 {
 	static DWORD v = 0;
 	static int addr = 0;
-	Param_WriteInteger(addr%2048,v);
-	printf("addr %d write 0x%x\n",addr%2048,v);
+	Param_WriteInteger(fm25l16_dev,addr%fm25l16_dev_size,v);
+	printf("addr %d write 0x%x\n",addr%fm25l16_dev_size,v);
 	
 	
 	v = 0;
-	v = Param_ReadInteger(addr%2048,0);
+	v = Param_ReadInteger(fm25l16_dev,addr%fm25l16_dev_size,0);
 
 	
-	printf("addr %d read 0x%x\n",addr%2048,v);
+	printf("addr %d read 0x%x\n",addr%fm25l16_dev_size,v);
 	v++;
 	addr++;
 }
@@ -99,7 +104,12 @@ static int test_suite_init(void)
 		}
 	}
 	register_console(uart0);
-	
+	fm25l16_dev = Param_dev_Request(DEV_FM25L16);
+	fm25l16_dev_size = Param_Devsize(fm25l16_dev);
+	assert_param(fm25l16_dev_size);
+	bpk_dev = Param_dev_Request(DEV_BPK);
+	bpk_dev_size = Param_Devsize(bpk_dev);
+	assert_param(bpk_dev_size);
 	return 1;
 }
 module_initcall(test_suite_init);

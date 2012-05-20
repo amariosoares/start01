@@ -3,7 +3,7 @@
 #include "FM25L16.h"
 #if (DEVICE_FM25L16_EN > 0)
 #define DEV_NAME "FM25L16"
-static Param_Device dev;
+static struct Param_Device dev;
 
 #define FM25L16B_CS_HIGH 			(GPIOA->BSRR = GPIO_Pin_4)
 #define FM25L16B_CS_LOW				(GPIOA->BRR  = GPIO_Pin_4)
@@ -202,36 +202,36 @@ void FM25L16B_WriteData_Len(u16 address,u8 *data_array,u16 length)
 	FM25L16B_CS_HIGH;	
 }
 
-BOOL    FM25L16_Param_Init(void)
+BOOL    FM25L16_Param_Init(struct Param_Device* dev)
 {
 	return TRUE;
 }
-BOOL    FM25L16_Param_Write(int addr,  DWORD  value)
+BOOL    FM25L16_Param_Write(struct Param_Device* dev,int addr,  DWORD  value)
 {
 	FM25L16B_WriteData_Len(addr, (u8*)&value, sizeof(DWORD));
 	return TRUE;
 }
-DWORD   FM25L16_Param_Read(int  addr,  DWORD  value)
+DWORD   FM25L16_Param_Read(struct Param_Device* dev,int  addr,  DWORD  value)
 {
 	FM25L16B_ReadData_Len(addr, (u8*)&value, sizeof(DWORD));
 	return value;
 }
-BOOL    FM25L16_WriteFloat(int addr,   float  value)
+BOOL    FM25L16_WriteFloat(struct Param_Device* dev,int addr,   float  value)
 {
 	FM25L16B_WriteData_Len(addr, (u8*)&value, sizeof(float));
 	return TRUE;
 }
-float   FM25L16_ReadFloat(int addr,    float  value)
+float   FM25L16_ReadFloat(struct Param_Device* dev,int addr,    float  value)
 {
 	FM25L16B_ReadData_Len(addr, (u8*)&value , sizeof(float));
 	return value;
 }
-BOOL	FM25L16_WriteBuffer(int addr,  u8* data, u16 size)
+BOOL	FM25L16_WriteBuffer(struct Param_Device* dev,int addr,  u8* data, u16 size)
 {
 	FM25L16B_WriteData_Len(addr, data, size);
 	return TRUE;
 }
-BOOL	FM25L16_ReadBuffer(int  addr,  u8* data, u16 size)
+BOOL	FM25L16_ReadBuffer(struct Param_Device* dev,int  addr,  u8* data, u16 size)
 {
 	 FM25L16B_ReadData_Len(addr, data, size);
 	 return TRUE;
@@ -262,22 +262,27 @@ void fm25l6_hard_init(void)
 
 	
 }
+u32 FM25L16_GetSize(struct Param_Device* dev)
+{
+	return 2048;
+}
+
 int FM25L16_Init(void)
 {
-	memset(&dev, 0 , sizeof(Param_Device));
+	memset(&dev, 0 , sizeof(struct Param_Device));
 	
 	strncpy(dev.name,DEV_NAME,MAX_PAR_DEVICE_NAME);
 
 	fm25l6_hard_init();
 
 	dev.Init	   = FM25L16_Param_Init;
-    dev.Write 	   = FM25L16_Param_Write;
-    dev.Read  	   = FM25L16_Param_Read;
-    dev.ReadFloat  = FM25L16_ReadFloat;
-    dev.WriteFloat = FM25L16_WriteFloat;
- 	dev.ReadBuffer = FM25L16_ReadBuffer;
+	dev.Write 	   = FM25L16_Param_Write;
+	dev.Read  	   = FM25L16_Param_Read;
+	dev.ReadFloat  = FM25L16_ReadFloat;
+	dev.WriteFloat = FM25L16_WriteFloat;
+	dev.ReadBuffer = FM25L16_ReadBuffer;
 	dev.WriteBuffer= FM25L16_WriteBuffer;
-	
+	dev.GetSize	= FM25L16_GetSize;
 	return Param_Register_Device(&dev);
 }
 device_initcall(FM25L16_Init);

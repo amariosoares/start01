@@ -7,7 +7,10 @@
 //#define BIG_ENDIAN	  2
 
 //#define BYTE_ENDIAN	  BIG_ENDIAN
-
+#ifndef UPDATE_PARAM_EN
+#define UPDATE_PARAM_EN 1
+#define PARAM_DEV_NAME "fm25l16"
+#endif
 #define MAX_CMD_NUM  128
 #define MAX_FUNC_NUM 1
 
@@ -88,8 +91,9 @@ struct TCmd{
 #define CMD_ITEM(_dir,_cmd,_func) {.dir=_dir,.cmd=_cmd,.func=_func,.next=NULL}
 
 #define VAR_UPDATE_MEMORY 1
+#ifdef UPDATE_PARAM_EN
 #define VAR_UPDATE_FLASH  2
-
+#endif
 typedef struct {
 	u8 		cmd;
 	u8 		var_size;
