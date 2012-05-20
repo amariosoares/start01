@@ -2,7 +2,7 @@
 #include "ParamCfg.h"
 #include "FM25L16.h"
 #if (DEVICE_FM25L16_EN > 0)
-#define DEV_NAME "FM25L16"
+#define DEV_NAME "fm25l16"
 static struct Param_Device dev;
 
 #define FM25L16B_CS_HIGH 			(GPIOA->BSRR = GPIO_Pin_4)

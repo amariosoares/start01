@@ -636,6 +636,21 @@
               <FileType>1</FileType>
               <FilePath>..\Bsp\Src\bsp.c</FilePath>
             </File>
+            <File>
+              <FileName>fm25l16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\Src\fm25l16.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc_stm32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\Src\rtc_stm32.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_bpk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\Src\stm32_bpk.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -702,11 +717,6 @@
               <FilePath>..\App\Src\ParamCfg.c</FilePath>
             </File>
             <File>
-              <FileName>FM25L16.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\Src\FM25L16.c</FilePath>
-            </File>
-            <File>
               <FileName>utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\App\Src\utils.c</FilePath>
@@ -715,11 +725,6 @@
               <FileName>datetime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\App\Src\datetime.c</FilePath>
-            </File>
-            <File>
-              <FileName>rtc_stm32.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\Src\rtc_stm32.c</FilePath>
             </File>
             <File>
               <FileName>testsuite.c</FileName>
