@@ -57,6 +57,23 @@ static int test_fm25l16(void)
 	v++;
 	addr++;
 }
+static int test_bpk(void)
+{
+	static DWORD v = 0;
+	static int addr = 0;
+	Param_WriteInteger(bpk_dev,addr%bpk_dev_size,v);
+	printf("addr %d write 0x%x\n",addr%bpk_dev_size,v);
+	
+	
+	v = 0;
+	v = Param_ReadInteger(bpk_dev,addr%bpk_dev_size,0);
+
+	
+	printf("addr %d read 0x%x\n",addr%bpk_dev_size,v);
+	v++;
+	addr++;
+}
+
 static int test_uart(void)
 {
 	
@@ -77,6 +94,7 @@ void TestSuiteJob(void *tid , void * arg)
 	test_led();
 	test_rtc();
 	test_fm25l16();
+	test_bpk();
 
 }
 
