@@ -30,9 +30,6 @@ static void net_work_test()
 //初始化硬件，初始化系统，建立启动任务				
 int main(void)
 {	
-#if 0
-	net_work_test();
-#endif
 	BSP_Init();
 	InitSystem();
 	if(!SysClockCheck()){
@@ -60,10 +57,10 @@ static bool SysClockCheck(void)
 //启动任务============================================================================
 void StartJob(void ) 
 {
-	start_sys_timer();
+//	start_sys_timer();
 	while(1)
 	{
-		timer_srv();
+		//timer_srv();
 		#if (DEVICE_NETWORK_EN > 0)
 			network_srv();
 		#endif
