@@ -13,8 +13,8 @@ static struct Param_Device*  fm25l16_dev = NULL;
 static struct Param_Device*  bpk_dev 		= NULL;
 static u32 fm25l16_dev_size = 1;
 static u32 bpk_dev_size = 1;
-
-static struct TSerialDevice* uart0;
+static struct TSerialDevice* uart2;
+static struct TSerialDevice* uart1;
 static TSerialDesc uartx={
 	.baudrate=B115200,
 	.mode=SERIAL_RX_INT_MODE |SERIAL_TX_INT_MODE,
@@ -41,7 +41,7 @@ static int test_rtc(void)
 	}
 	return 1;
 }
-static int test_fm25l16(void)
+static void test_fm25l16(void)
 {
 	static DWORD v = 0;
 	static int addr = 0;
@@ -57,7 +57,7 @@ static int test_fm25l16(void)
 	v++;
 	addr++;
 }
-static int test_bpk(void)
+static void test_bpk(void)
 {
 	static DWORD v = 0;
 	static int addr = 0;
@@ -73,10 +73,16 @@ static int test_bpk(void)
 	v++;
 	addr++;
 }
-
-static int test_uart(void)
+static  const char* usart_text = "hello yangxd\n";
+static u8 usart_buf[128];
+static void test_uart2(void)
 {
-	
+	if(uart2){
+		u32 len = usart_getpacket(uart2,usart_buf,128);
+		if(len){
+			usart_sendstring(uart2,usart_buf,len);
+		}
+	}
 }
 #if (DEVICE_NETWORK_EN > 0)
 const char* net_text = "welcome to stm32f107's network!!!";
@@ -95,9 +101,20 @@ void TestSuiteJob(void *tid , void * arg)
 	test_rtc();
 	test_fm25l16();
 	test_bpk();
+	if(0){ //如果要测试串口，请打开
+		test_uart2();
+	}
 
 }
-
+static void init_usart()
+{
+	uart2= usart_request("ttystm2");
+	if(uart2){
+		if(!usart_open(uart2,&uartx)){
+			printf("ttystm2 open failed\n");
+		}
+	}
+}
 static int test_suite_init(void)
 {
 	u8 ret = 0;
@@ -115,13 +132,13 @@ static int test_suite_init(void)
 	}
 	check_rtc_exist();
 
-	uart0 = usart_request("ttystm1");
-	if(uart0){
-		if(usart_open(uart0,&uartx)){
+	uart1 = usart_request("ttystm1");
+	if(uart1){
+		if(usart_open(uart1,&uartx)){
 
 		}
 	}
-	register_console(uart0);
+	register_console(uart1);
 	fm25l16_dev = Param_dev_Request(DEV_FM25L16);
 	fm25l16_dev_size = Param_Devsize(fm25l16_dev);
 	assert_param(fm25l16_dev_size);
