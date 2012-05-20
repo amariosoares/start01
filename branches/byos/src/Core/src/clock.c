@@ -1,175 +1,111 @@
 /*
- * clock.c - generic clocksource implementation
+ * File      : clock.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * This file contains the clocksource implementation from the Linux
- * kernel originally by John Stultz
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
  *
- * Copyright (C) 2004, 2005 IBM, John Stultz (johnstul@us.ibm.com)
- * Copyright (c) 2007 Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- *
- * See file CREDITS for list of people who contributed to this
- * project.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Change Logs:
+ * Date           Author       Notes
+ * 2006-03-12     Bernard      first version
+ * 2006-05-27     Bernard      add support for same priority thread schedule
+ * 2006-08-10     Bernard      remove the last rt_schedule in rt_tick_increase
+ * 2010-03-08     Bernard      remove rt_passed_second
+ * 2010-05-20     Bernard      fix the tick exceeds the maximum limits
+ * 2010-07-13     Bernard      fix rt_tick_from_millisecond issue found by kuronca
+ * 2011-06-26     Bernard      add rt_tick_set function.
  */
 
-//#include <common.h>
-#include "div64.h"
-#include "clock.h"
+#include <rthw.h>
+#include <rtthread.h>
 
-static struct clocksource *current_clock;
-static uint64_t time_ns;
+static rt_tick_t rt_tick = 0;
 
-uint64_t get_time_ns(void)
-{
-	struct clocksource *cs = current_clock;
-    uint64_t cycle_now, cycle_delta;
-    uint64_t ns_offset;
-
-	cycle_now = cs->read() & cs->mask;
-	cycle_delta = ((cycle_now - cs->cycle_last) & cs->mask);
-
-	ns_offset = cyc2ns(cs, cycle_delta);
-
-	cs->cycle_last = cycle_now;
-
-	time_ns += ns_offset;
-    return time_ns;
-}
-
-
-//EXPORT_SYMBOL(get_time_ns);
+extern void rt_timer_check(void);
 
 /**
- * clocks_calc_mult_shift - calculate mult/shift factors for scaled math of clocks
- * @mult:       pointer to mult variable
- * @shift:      pointer to shift variable
- * @from:       frequency to convert from
- * @to:         frequency to convert to
- * @maxsec:     guaranteed runtime conversion range in seconds
+ * This function will init system tick and set it to zero.
+ * @ingroup SystemInit
  *
- * The function evaluates the shift/mult pair for the scaled math
- * operations of clocksources and clockevents.
- *
- * @to and @from are frequency values in HZ. For clock sources @to is
- * NSEC_PER_SEC == 1GHz and @from is the counter frequency. For clock
- * event @to is the counter frequency and @from is NSEC_PER_SEC.
- *
- * The @maxsec conversion range argument controls the time frame in
- * seconds which must be covered by the runtime conversion with the
- * calculated mult and shift factors. This guarantees that no 64bit
- * overflow happens when the input value of the conversion is
- * multiplied with the calculated mult factor. Larger ranges may
- * reduce the conversion accuracy by chosing smaller mult and shift
- * factors.
+ * @deprecated since 1.1.0, this function does not need to be invoked
+ * in the system initialization.
  */
-
-void clocks_calc_mult_shift(uint32_t *mult, uint32_t *shift, uint32_t from, uint32_t to, uint32_t maxsec)
+void rt_system_tick_init(void)
 {
-        uint64_t tmp;
-        uint32_t sft, sftacc = 32;
-
-        /*
-         * Calculate the shift factor which is limiting the conversion
-         * range:
-         */
-        tmp = ((uint64_t)maxsec * from) >> 32;
-        while (tmp) {
-                tmp >>=1;
-                sftacc--;
-        }
-
-        /*
-         * Find the conversion shift/mult pair which has the best
-         * accuracy and fits the maxsec conversion range:
-         */
-        for (sft = 32; sft > 0; sft--) {
-                tmp = (uint64_t) to << sft;
-                tmp += from / 2;
-                do_div(tmp, from);
-				
-                if ((tmp >> sftacc) == 0)
-                        break;
-        }
-        *mult = tmp;
-        *shift = sft;
 }
-
 
 /**
- * clocksource_hz2mult - calculates mult from hz and shift
- * @hz:                 Clocksource frequency in Hz
- * @shift_constant:     Clocksource shift factor
- *
- * Helper functions that converts a hz counter
- * frequency to a timsource multiplier, given the
- * clocksource shift value
+ * @addtogroup Clock
  */
-uint32_t clocksource_hz2mult(uint32_t hz, uint32_t shift_constant)
+
+/*@{*/
+
+/**
+ * This function will return current tick from operating system startup
+ *
+ * @return current tick
+ */
+rt_tick_t rt_tick_get(void)
 {
-        /*  hz = cyc/(Billion ns)
-         *  mult/2^shift  = ns/cyc
-         *  mult = ns/cyc * 2^shift
-         *  mult = 1Billion/hz * 2^shift
-         *  mult = 1000000000 * 2^shift / hz
-         *  mult = (1000000000<<shift) / hz
-         */
-        uint64_t tmp = ((uint64_t)1000000000) << shift_constant;
-
-        tmp += hz/2; /* round for do_div */
-        do_div(tmp, hz)
-
-
-        return (uint32_t)tmp;
+	/* return the global tick */
+	return rt_tick;
 }
 
-int is_timeout(uint64_t start_ns, uint64_t time_offset_ns)
+/**
+ * This function will set current tick
+ */
+void rt_tick_set(rt_tick_t tick)
 {
-	if ((int64_t)(start_ns + time_offset_ns - get_time_ns()) < 0)
-		return 1;
-	else
-		return 0;
-}
-//EXPORT_SYMBOL(is_timeout);
+	rt_base_t level;
+	level = rt_hw_interrupt_disable();
 
-void ndelay(unsigned long nsecs)
+	rt_tick = tick;
+	
+	rt_hw_interrupt_enable(level);
+}
+
+/**
+ * This function will notify kernel there is one tick passed. Normally,
+ * this function is invoked by clock ISR.
+ */
+void rt_tick_increase(void)
 {
-	uint64_t start = get_time_ns();
+	struct rt_thread *thread;
 
-	while(!is_timeout(start, nsecs));
+	/* increase the global tick */
+	++ rt_tick;
+
+	/* check time slice */
+	thread = rt_thread_self();
+
+	-- thread->remaining_tick;
+	if (thread->remaining_tick == 0)
+	{
+		/* change to initialized tick */
+		thread->remaining_tick = thread->init_tick;
+
+		/* yield */
+		rt_thread_yield();
+	}
+
+	/* check timer */
+	rt_timer_check();
 }
-//EXPORT_SYMBOL(ndelay);
 
-void udelay(unsigned long usecs)
+/**
+ * This function will calculate the tick from millisecond.
+ *
+ * @param ms the specified millisecond
+ *
+ * @return the calculated tick
+ */
+rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms)
 {
-	uint64_t start = get_time_ns();
-
-	while(!is_timeout(start, usecs * USECOND));
+	/* return the calculated tick */
+	return (RT_TICK_PER_SECOND * ms + 999) / 1000;
 }
-//EXPORT_SYMBOL(udelay);
 
-void mdelay(unsigned long msecs)
-{
-	uint64_t start = get_time_ns();
-
-	while(!is_timeout(start, msecs * MSECOND));
-}
-//EXPORT_SYMBOL(mdelay);
-
-int init_clock(struct clocksource *cs)
-{
-	current_clock = cs;
-	return 0;
-}
+/*@}*/
 

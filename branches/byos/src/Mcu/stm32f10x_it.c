@@ -54,14 +54,6 @@ void NMI_Handler(void)
   */
 
 extern u8 HardFault_Handler_X;	//≈≈¥Ì”√
-void HardFault_Handler(void)
-{
-  /* Go to infinite loop when Hard Fault exception occurs */
-  printf("HardFault_Handler_X\r\n");
-  while (1)
-  {
-  }
-}
 
 /**
   * @brief  This function handles Memory Manage exception.
@@ -138,7 +130,7 @@ void DebugMon_Handler(void)
 extern void Time_Update(void);
 void SysTick_Handler(void)
 {
-	Time_Update();
+	//Time_Update();
 }
 
 /******************************************************************************/
