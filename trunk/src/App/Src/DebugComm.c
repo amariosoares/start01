@@ -24,7 +24,9 @@ static route_table_func m_route_func = NULL;
 static void Init_CmdList(void);
 static void Dump_Msg(TCommMsg* msg);
 static void AckCommMsg(TCommMsg * msg,TDataChan dest,ack_func ack);
-
+#ifdef UPDATE_PARAM_EN
+static struct Param_Device* dev =  NULL;
+#endif
 u8 	  RegisterCmd(struct TCmd* item)
 {
 
@@ -84,9 +86,11 @@ static int Var_Auto_Update_Service(TCommMsg* msg)
 				for(i = 0; i < var_size; i++)
 					p[i] = msg->param.__pad.pad[i];
 			}
+			#ifdef UPDATE_PARAM_EN
 			if(var_type&VAR_UPDATE_FLASH){
-				Param_WriteBuffer(GET_OFFSET(cmd),msg->param.__pad.pad,var_size);
+				Param_WriteBuffer(dev,GET_OFFSET(cmd),msg->param.__pad.pad,var_size);
 			}
+			#endif
 			
 		}
 		else if(dir == DIR_READ)
@@ -220,6 +224,9 @@ static void Init_CmdList(void)
 			var_list[i].var_type = 0;
 		}
 
+	}
+	if(dev==NULL){
+		dev = Param_dev_Request(PARAM_DEV_NAME);
 	}
 	//memset(notify_list,0,sizeof(TCmdNotifyList)*MAX_DIR_SIZE);
 }
