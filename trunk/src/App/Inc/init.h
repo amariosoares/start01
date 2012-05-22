@@ -2,7 +2,7 @@
 #define _INIT_H
 typedef int (*initcall_t)(void);
 #define __define_initcall(level,fn,id) \
-	static initcall_t __initcall_##fn##id __attribute__((__used__)) \
+	static initcall_t __initcall_##fn##id __attribute__((used)) \
 	__attribute__((__section__("initcall" level))) = fn
 	
 #define core_initcall(fn)		__define_initcall("1",fn,1)	
