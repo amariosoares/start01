@@ -7,7 +7,6 @@
 #include "udp.h"
 #include "debugcomm.h"
 #include "network.h"
-#include "pinmux.h"
 #include "gpio.h"
 #include "clock.h"
 
@@ -348,11 +347,11 @@ void network_var_init(void)
 }
 
 #define PHY_RESET_PIN_MODE		GPIO_PORTB|GPIO_OUT_PP|GPIO_50MHZ|5
-#define PHY_RESET_PIN           STM32_GPIO_NR(PB,5)
+#define PHY_RESET_PIN           GPIO_NR(PB,5)
 
 void phy_reset(void)
 {
-	stm32_gpio_mode(PHY_RESET_PIN);
+	gpio_set_mode(PHY_RESET_PIN);
 	gpio_set_value(PHY_RESET_PIN,1);
 	gpio_set_value(PHY_RESET_PIN,0);
 	mdelay(100); 
