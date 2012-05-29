@@ -346,7 +346,7 @@
               <MiscControls>--c99</MiscControls>
               <Define>STM32F10X_CL, USE_STDPERIPH_DRIVER,USE_FULL_ASSERT</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Mcu\Libraries\CMSIS\Core\CM3;..\Mcu\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Mcu;..\Mcu\CortexM3;..\uCOS;..\SDK;..\SDK\BSP;..\Bsp\Inc;..\App\Inc;..\Core\inc;..\network\STM32_ETH_Driver\inc;..\network\lwip_v1.3.1\port\STM32;..\network\lwip_v1.3.1\src\include;..\network\lwip_v1.3.1\src\include\ipv4;..\network\inc;..\network\lwip_v1.3.1\src\netif;..\network\lwip_v1.3.1\src\include\lwip</IncludePath>
+              <IncludePath>..\Mcu\Libraries\CMSIS\Core\CM3;..\Mcu\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Mcu;..\Mcu\CortexM3;..\uCOS;..\SDK;..\SDK\BSP;..\Bsp\Inc;..\App\Inc;..\Core\inc;..\network\STM32_ETH_Driver\inc;..\network\lwip_v1.3.1\port\STM32;..\network\lwip_v1.3.1\src\include;..\network\lwip_v1.3.1\src\include\ipv4;..\network\inc;..\network\lwip_v1.3.1\src\netif;..\network\lwip_v1.3.1\src\include\lwip;..\anybus\std_driver\ABCC\INCLUDE;..\anybus\std_driver\APDR\INCLUDE;..\anybus\std_driver\SYS\INCLUDE;..\anybus\std_driver\APLINK\INCLUDE;..\anybus\std_driver\UTIL\INCLUDE;..\anybus\std_driver\CRC\INCLUDE</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -960,6 +960,51 @@
               <FileName>ip_frag.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\network\lwip_v1.3.1\src\core\ipv4\ip_frag.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>anybus</GroupName>
+          <Files>
+            <File>
+              <FileName>abcc_cbf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\anybus\std_driver\ABCC\abcc_cbf.c</FilePath>
+            </File>
+            <File>
+              <FileName>apdr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\anybus\std_driver\APDR\apdr.c</FilePath>
+            </File>
+            <File>
+              <FileName>apdr_par.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\anybus\std_driver\APDR\apdr_par.c</FilePath>
+            </File>
+            <File>
+              <FileName>apdr_ser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\anybus\std_driver\APDR\apdr_ser.c</FilePath>
+            </File>
+            <File>
+              <FileName>aplink.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\anybus\std_driver\APLINK\aplink.c</FilePath>
+            </File>
+            <File>
+              <FileName>crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\anybus\std_driver\CRC\crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_adpt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\anybus\std_driver\SYS\sys_adpt.c</FilePath>
+            </File>
+            <File>
+              <FileName>util.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\anybus\std_driver\UTIL\util.c</FilePath>
             </File>
           </Files>
         </Group>
