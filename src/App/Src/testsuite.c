@@ -31,7 +31,7 @@ static TSerialDesc uart3_desc={
 	.baudrate=B9600,
 	.mode=SERIAL_RX_INT_MODE , //发送采用查询方式
 };
-
+extern struct TSerialDevice* anybus_usart ;
 const char send_text[] = {0xab,0xcd,0,1,2,3,4};
 
 #define CMBUS_RXTX_MODE 		GPIO_PORTC|GPIO_OUT_PP|GPIO_50MHZ|12
@@ -161,6 +161,43 @@ static void init_usart()
 		gpio_set_value(CMBUS_RXTX_GPIO,CMBUS_RX);
 	}
 }
+#include "abcc_td.h"
+#include "abcc_com.h"
+#include "abcc.h"
+static int cnt = 0;
+
+extern u16 anybus_recv_len;
+static u8 anybus_recv_buf[512];
+void anybus_timeout(void *tid , void * arg) 
+{
+	ABCC_RunTimerSystem();
+	if(((cnt++)%5) == 0){
+		int len = usart_getdatasize(anybus_usart);
+		if(len >= anybus_recv_len){
+			usart_getpacket(anybus_usart,anybus_recv_buf,len);
+			APDR_SerialTelegramReceived(anybus_recv_buf);
+		}
+	}
+}
+void anybus_service(void)
+{
+	ABCC_RunDriver();
+}
+static void anybus_init(void)
+{
+	struct TimerDevice* dev;
+	
+	ABCC_StartDriver();
+	
+	dev = request_timer(1);
+	
+	if(dev == NULL) return ;
+	
+	if( dev ){
+		if(!create_timer(dev,ABCC_TIMER_RESOLUTION_MS* DELAY_MSECOND, anybus_timeout, NULL, LOOP))
+			return;
+	}
+}
 static int test_suite_init(void)
 {
 	u8 ret = 0;
@@ -168,6 +205,7 @@ static int test_suite_init(void)
 
 	
 	DEBUG_FUNC();
+	/*
 	dev = request_timer(1);
 	
 	if(dev == NULL) return 0;
@@ -176,6 +214,7 @@ static int test_suite_init(void)
 		if(!create_timer(dev, DELAY_SECOND, TestSuiteJob, NULL, LOOP))
 			return 0;
 	}
+	*/
 	check_rtc_exist();
 
 	uart1 = usart_request("ttystm1");
@@ -186,6 +225,7 @@ static int test_suite_init(void)
 	}
 	register_console(uart1);
 	//init_usart();
+	anybus_init();
 	fm25l16_dev = Param_dev_Request(DEV_FM25L16);
 	fm25l16_dev_size = Param_Devsize(fm25l16_dev);
 	assert_param(fm25l16_dev_size);

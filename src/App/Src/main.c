@@ -56,7 +56,7 @@ static bool SysClockCheck(void)
 	return true;
 }
 
-
+extern void anybus_service(void);
 //Æô¶¯ÈÎÎñ============================================================================
 void StartJob(void ) 
 {
@@ -67,6 +67,7 @@ void StartJob(void )
 		#if (DEVICE_NETWORK_EN > 0)
 			network_srv();
 		#endif
+		anybus_service();
 	}
 
 }

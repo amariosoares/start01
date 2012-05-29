@@ -1,3 +1,4 @@
+#include "includes.h"
 #include "serial.h"
 #include "kfifo.h"
 //#include "list.h"
@@ -15,17 +16,17 @@ static struct kfifo    g_console_fifo;
 static struct kfifo  *console_fifo = NULL;
 static unsigned char console_buffer[MAX_CONSOLE_BUF_SIZE];
 static int      console_buffer_size = MAX_CONSOLE_BUF_SIZE;
-BOOL usart_register(struct TSerialDevice* dev)
+int usart_register(struct TSerialDevice* dev)
 {
-	if(serial_list.num >= MAX_SERIAL_NUM) return FALSE;
+	if(serial_list.num >= MAX_SERIAL_NUM) return 0;
 
 	//sprintf(dev->name,"%s%d",dev->name,dev->id);
 	dev->tx_fifo = NULL;
 	dev->rx_fifo = NULL;
 	dev->tx_flag = 0;
-	dev->open_flag = FALSE;
+	dev->open_flag = 0;
 	serial_list.serial_dev[serial_list.num++] = dev;
-	return TRUE;
+	return 1;
 }
 
 static struct TSerialDevice* usart_get_device(const char* ttyname)
@@ -41,66 +42,66 @@ struct TSerialDevice* usart_request(const char* ttyname)
 {
 	return usart_get_device(ttyname);
 }
-BOOL usart_fifo_init(struct TSerialDevice* dev)
+int usart_fifo_init(struct TSerialDevice* dev)
 {
 	assert_param(dev);
 
 	if(dev){
 		if(dev->mode &SERIAL_RX_INT_MODE){
 			dev->rx_fifo = kfifo_alloc(MAX_USART_BUF);
-			if(dev->rx_fifo == NULL)   return FALSE;
+			if(dev->rx_fifo == NULL)   return 0;
 		}
 		if(dev->mode &SERIAL_TX_INT_MODE){
 			dev->tx_fifo = kfifo_alloc(MAX_USART_BUF);
-			if(dev->tx_fifo == NULL)   return FALSE;
+			if(dev->tx_fifo == NULL)   return 0;
 		}
-		return TRUE;
+		return 1;
 	}
-	return FALSE;
+	return 0;
 }
 		
-BOOL usart_is_open(struct TSerialDevice* dev)
+int usart_is_open(struct TSerialDevice* dev)
 {
 	if(dev){
 		return dev->open_flag;
 	}
-	return FALSE;
+	return 0;
 }
 
-BOOL usart_open(struct TSerialDevice* dev,TSerialDesc* desc)
+int usart_open(struct TSerialDevice* dev,TSerialDesc* desc)
 {
 	assert_param(dev);
 	assert_param(desc);
 	assert_param(dev->open);
 	if(dev){
-		if(dev->open_flag) return TRUE;
+		if(dev->open_flag) return 1;
 		
 		if(desc->mode == SERIAL_ERROR_MODE){
 			desc->mode = SERIAL_RX_INT_MODE;
 		}
 		dev->mode = desc->mode;
-		if(!usart_fifo_init(dev)) return false;
+		if(!usart_fifo_init(dev)) return 0;
 		
 		if(dev->open(dev,desc)){
-			dev->open_flag = TRUE;
-			return TRUE;
+			dev->open_flag = 1;
+			return 1;
 		}
 	}
-	return FALSE;
+	return 0;
 }
 
 u8	 usart_portnum(void)
 {
 	return  serial_list.num;
 }
-BOOL usart_close(struct TSerialDevice* dev)
+int usart_close(struct TSerialDevice* dev)
 {
 	assert_param(dev && dev->close);
 	
 	if(dev && dev->open_flag){
 			return dev->close(dev);
 	}
-	return FALSE;
+	return 0;
 
 }
 
@@ -108,7 +109,7 @@ u32  usart_sendstring(struct TSerialDevice* dev, u8* data, u32 len)
 {
 	assert_param(dev);
 	assert_param(dev->sendstring != NULL);
-	assert_param(dev->open_flag == TRUE);
+	assert_param(dev->open_flag == 1);
 	if(dev && dev->open_flag){
 		return dev->sendstring(dev, data, len);
 	}
@@ -151,7 +152,7 @@ u32   usart_getdatasize(struct TSerialDevice* dev)
 	return 0;
 
 }
-BOOL register_console(struct TSerialDevice* dev)
+int register_console(struct TSerialDevice* dev)
 {
 	console_dev = dev;
 
@@ -161,7 +162,7 @@ BOOL register_console(struct TSerialDevice* dev)
 			console_putc(ch);
 		}
 	}
-	return TRUE;
+	return 1;
 }
 void   console_alloc_kfifo(void)
 {

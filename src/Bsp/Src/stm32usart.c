@@ -35,7 +35,7 @@ typedef enum{
 	INDEX_UART4,
 	INDEX_MAX,
 }SERIAL_INDEX;
-static BOOL request_irq(int irq);
+static int request_irq(int irq);
 static TSerialDesc defdesc = {
 	.baudrate  = B115200,
 	.databit   = DataBit8,
@@ -159,7 +159,7 @@ void stm32_dma_init(STM32_USART_DESC* desc)
 	DMA_Init(desc->dma, &DMA_InitStructure);							//根据上诉设置初始化DMA
 	DMA_ITConfig(desc->dma, DMA_IT_TC, ENABLE);    						//开启DMA通道中断
 }
-static BOOL stm32_usart_gpio_init(STM32_USART_DESC* desc)			//串口引脚初始化
+static int stm32_usart_gpio_init(STM32_USART_DESC* desc)			//串口引脚初始化
 {
 	GPIO_InitTypeDef GPIO_InitStructure;		//串口引脚结构
 
@@ -258,7 +258,7 @@ void stm32_param_config(STM32_USART_DESC* uart,TSerialDesc* desc)
 }
 
 
-static BOOL request_irq(int irq)
+static int request_irq(int irq)
 {
 	NVIC_InitTypeDef NVIC_InitStructure; 		//中断控制器变量
 
@@ -272,7 +272,7 @@ static BOOL request_irq(int irq)
 }
 
 
-static void stm32_open_uart_interrput(STM32_USART_DESC* desc,BOOL enable)
+static void stm32_open_uart_interrput(STM32_USART_DESC* desc,int enable)
 {
 
 	USART_ClearITPendingBit(desc->usart, USART_IT_RXNE);				//清接收标志
@@ -287,9 +287,9 @@ static void stm32_open_uart_interrput(STM32_USART_DESC* desc,BOOL enable)
 }
 
 
-static BOOL stm32_uart_enable_clock( STM32_USART_DESC* uart,BOOL enable)
+static int stm32_uart_enable_clock( STM32_USART_DESC* uart,int enable)
 {
-	BOOL ret = FALSE;
+	int ret = FALSE;
 	if(uart){
 		FunctionalState state = enable?ENABLE:DISABLE;
 		switch(uart->uart_id){
@@ -475,11 +475,11 @@ static u32  stm32_uart_sendbyte(struct TSerialDevice* dev, u8 ch)
 
 	return 1;
 }
-static BOOL stm32_uart_close(struct TSerialDevice* dev)
+static int stm32_uart_close(struct TSerialDevice* dev)
 {
 	return TRUE;
 }
-static BOOL stm32_uart_open(struct TSerialDevice* dev,TSerialDesc* desc)
+static int stm32_uart_open(struct TSerialDevice* dev,TSerialDesc* desc)
 {
 
 	STM32_USART_DESC* uart = (STM32_USART_DESC*)dev->private_data;
@@ -508,7 +508,7 @@ static u32 stm32_uart_getdatasize(struct TSerialDevice* dev)
 	return kfifo_len(dev->rx_fifo);
 }
 
-BOOL  stm32_uart_set_timeout(struct TSerialDevice* dev,u32 timeout_us)
+int  stm32_uart_set_timeout(struct TSerialDevice* dev,u32 timeout_us)
 {
 	
 	STM32_USART_DESC* uart = (STM32_USART_DESC*)dev->private_data;

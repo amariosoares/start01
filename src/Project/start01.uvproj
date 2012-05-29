@@ -612,11 +612,6 @@
               <FilePath>..\Bsp\Src\gpio.c</FilePath>
             </File>
             <File>
-              <FileName>pinmux.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\Src\pinmux.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Bsp\Src\stm32usart.c</FilePath>
