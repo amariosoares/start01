@@ -58,23 +58,23 @@ typedef struct{
 struct TSerialDevice{
 	char name[MAX_SERIAL_NAME];
 	u8   id; //串口序号		
-	BOOL (*open)(struct TSerialDevice* dev,TSerialDesc* desc);
-	BOOL (*close)(struct TSerialDevice* dev);
-	BOOL (*reset)(struct TSerialDevice* dev);
+	int (*open)(struct TSerialDevice* dev,TSerialDesc* desc);
+	int (*close)(struct TSerialDevice* dev);
+	int (*reset)(struct TSerialDevice* dev);
 	u32  (*sendbyte)(struct TSerialDevice* dev,u8 ch);
 	u32  (*sendstring)(struct TSerialDevice* dev,u8* data, u32 len);
 	u32  (*dma_sendstring)(struct TSerialDevice* dev,u8* data, u32 len);
-	BOOL  (*getbyte)(struct TSerialDevice* dev,u8* ch);
+	int  (*getbyte)(struct TSerialDevice* dev,u8* ch);
 	u32  (*getstring)(struct TSerialDevice* dev,u8* data, u32 len,s32 timeout_ms);	
 	u32  (*getpacket)(struct TSerialDevice* dev, u8* data, u32 len);
-	BOOL  (*setpacket_timeout)(struct TSerialDevice* dev,u32 timeout_us);
+	int  (*setpacket_timeout)(struct TSerialDevice* dev,u32 timeout_us);
 	u32  (*getdatasize)(struct TSerialDevice* dev);
-	BOOL (*enable_clk)(struct TSerialDevice* dev,u8 enable);
+	int (*enable_clk)(struct TSerialDevice* dev,u8 enable);
 	struct kfifo* rx_fifo;
 	struct kfifo* tx_fifo;
 	volatile int    tx_flag;
-	BOOL   mode;
-	BOOL   open_flag;
+	int   mode;
+	int   open_flag;
 	void*  private_data;
 	TSerialDesc* desc;
 	u16    rx_char;
@@ -84,17 +84,17 @@ typedef struct {
 	int  num;
 }TUartPlatForm;
 struct TSerialDevice* usart_request(const char* ttyname);
-BOOL usart_open(struct TSerialDevice* dev,TSerialDesc* desc);
-BOOL usart_is_open(struct TSerialDevice* dev);
+int usart_open(struct TSerialDevice* dev,TSerialDesc* desc);
+int usart_is_open(struct TSerialDevice* dev);
 u8	 usart_portnum(void);
-BOOL usart_close(struct TSerialDevice* dev);
+int usart_close(struct TSerialDevice* dev);
 u32  usart_sendstring(struct TSerialDevice* dev, u8* data, u32 len);
 int  usart_sendbyte(struct TSerialDevice* dev,u8 ch);
 u32   usart_getpacket(struct TSerialDevice* dev, u8* data, u32 len);
 u32   usart_getdatasize(struct TSerialDevice* dev);
 void  console_putc(char ch);
 void console_putstring(const char* text);
-BOOL register_console(struct TSerialDevice* dev);
+int register_console(struct TSerialDevice* dev);
 
 /*
 timeout: 
@@ -110,8 +110,8 @@ timeout:
 */
 u32   usart_getpacket(struct TSerialDevice* dev, u8* data, u32 len);
 
-BOOL  usart_set_timeout(struct TSerialDevice* dev,u32 timeout_us);
-BOOL  usart_register(struct TSerialDevice* dev);
+int  usart_set_timeout(struct TSerialDevice* dev,u32 timeout_us);
+int  usart_register(struct TSerialDevice* dev);
 #ifdef __cplusplus		   //定义对CPP进行C处理 //结束部分
 }
 #endif
