@@ -39,6 +39,10 @@ const char send_text[] = {0xab,0xcd,0,1,2,3,4};
 #define CMBUS_RX 				1
 #define CMBUS_TX				0
 
+
+#define ANYBUS_RESET_MODE 		GPIO_PORTD|GPIO_OUT_PP|GPIO_50MHZ|14
+#define ANYBUS_RESET_GPIO			GPIO_NR(PD,14)
+
 //#define CMBUS_FO_MODE 		GPIO_PORTD|GPIO_OUT_PP|GPIO_50MHZ|2
 
 static int test_led(void)
@@ -135,6 +139,7 @@ void TestSuiteJob(void *tid , void * arg)
 	//network_test();
 #endif
 	test_led();
+#if 0
 	test_rtc();
 	test_fm25l16();
 	test_bpk();
@@ -142,6 +147,7 @@ void TestSuiteJob(void *tid , void * arg)
 		test_uart2();
 		test_uart3();
 	}
+#endif
 
 }
 static void init_usart()
@@ -186,6 +192,11 @@ void anybus_service(void)
 static void anybus_init(void)
 {
 	struct TimerDevice* dev;
+
+	
+	gpio_set_value(ANYBUS_RESET_GPIO,0);
+	mdelay(100);
+	gpio_set_value(ANYBUS_RESET_GPIO,1);
 	
 	ABCC_StartDriver();
 	
@@ -205,7 +216,7 @@ static int test_suite_init(void)
 
 	
 	DEBUG_FUNC();
-	/*
+	
 	dev = request_timer(1);
 	
 	if(dev == NULL) return 0;
@@ -214,7 +225,7 @@ static int test_suite_init(void)
 		if(!create_timer(dev, DELAY_SECOND, TestSuiteJob, NULL, LOOP))
 			return 0;
 	}
-	*/
+	
 	check_rtc_exist();
 
 	uart1 = usart_request("ttystm1");
@@ -234,7 +245,7 @@ static int test_suite_init(void)
 	assert_param(bpk_dev_size);
 
 	gpio_set_mode(CMBUS_RXTX_MODE);
-	
+	gpio_set_mode(ANYBUS_RESET_MODE);
 	return 1;
 }
 module_initcall(test_suite_init);
