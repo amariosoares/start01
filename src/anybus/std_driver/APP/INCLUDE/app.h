@@ -4,7 +4,7 @@
 ** File Name
 ** ---------
 **
-** abcc_com.h
+** app.h
 **
 ********************************************************************************
 ********************************************************************************
@@ -12,16 +12,7 @@
 ** Description
 ** -----------
 **
-** Includes definitions of structures/enumerations and definitions that are
-** used by both application and driver.
-**
-********************************************************************************
-********************************************************************************
-**
-** Porting instructions:
-** ---------------------
-**
-** No porting required.
+** This is the public header file for the APP object.
 **
 ********************************************************************************
 ********************************************************************************
@@ -31,7 +22,12 @@
 **
 ** Public Services:
 **
-**        -
+**    APP_ProcessCmdMsg()        - Processes commands sent to the APP object
+**
+** Private Services:
+**
+**    app_InstanceCommand()      - Processes commands to the instance
+**    app_ObjectCommand()        - Processes commands to the object
 **
 ********************************************************************************
 ********************************************************************************
@@ -64,213 +60,193 @@
 ********************************************************************************
 */
 
-#ifndef ABCC_COM_H
-#define ABCC_COM_H
-
-
-#include "abp.h"
+#ifndef APP_H
+#define APP_H
 
 
 /*******************************************************************************
 **
-** Data Types
+** Typedefs
 **
 ********************************************************************************
 */
 
-
 /*------------------------------------------------------------------------------
 **
-** ABCC_PdAdiMapType
+** app_ObjectType
+**
+** Structure describing an Application Object.
 **
 **------------------------------------------------------------------------------
 */
 
-typedef struct ABCC_PdAdiMapType
+typedef struct app_ObjectType 
 {
-   UINT16         iAdiNbr;       /* ADI number - set by the application       */
-   UINT8          bDataType;     /* Data type - set by the application        */
-   UINT8          bNbrElements;  /* Number of elements - set by the appl.     */
-   UINT8          bFirstElement; /* Map starts from this element number       */
-   UINT16         iOrderNumber;  /* Order number of instance - set by the appl*/
-
-   UINT8          bAreaOffset;   /* ADI's data area offset in bytes, starting */
-                                 /* from offset zero. Set by ABCC driver.     */
-   UINT8          bMapStatus;    /* 0 = Driver failed to map ADI, 1 = Map OK. */
-                                 /* Set by the Driver.                        */
-}
-ABCC_PdAdiMapType;
+  UINT8* acName;
+  UINT8 bRevision;
+  UINT16 iNumberOfInstances;
+  UINT16 iHighestInstanceNo;
+} 
+app_ObjectType;
 
 
 /*------------------------------------------------------------------------------
 **
-** ABCC_PdMapType
+** app_InstanceType
+**
+** Structure describing an Application Data Instance.
 **
 **------------------------------------------------------------------------------
 */
 
-typedef struct ABCC_PdMapType
+typedef struct app_InstanceType 
 {
-   UINT16            iNbrMaps;      /* Number of ADI Write/Read mappings   */
-                                    /* present in asMaps[] array.          */
-   ABCC_PdAdiMapType*  psMaps;      /* Pointer to Array of ADI mappings    */
+  BOOL8 fConfigured;
+  UINT8 bLanguage;
+  UINT8 bSupportedLanguages[ 1 ];
+  UINT8 bNumberOfSupportedLanguages;
+} 
+app_InstanceType;
 
-}
-ABCC_PdMapType;
-
-
-/*------------------------------------------------------------------------------
-**
-** Enumeration of the different severity-codes of an error message.
-**
-**------------------------------------------------------------------------------
-*/
-
-typedef enum ABCC_SeverityType
-{
-   /*
-   ** Information about an event that has occured (e.g., serial message lost).
-   */
-
-   ABCC_SEV_INFORMATION              = 0,
-
-
-   /*
-   ** An error of minor importance has occured. The system can recover from this
-   ** error.
-   */
-
-   ABCC_SEV_WARNING,
-
-
-   /*
-   ** A fatal event has occured, the system cannot recover (e.g., driver is out
-   ** of timers).
-   */
-
-   ABCC_SEV_FATAL,
-
-
-   /*
-   ** Force the compiler to use a 16-bit variable as enumeration.
-   */
-
-   ABCC_SEV_SET_ENUM_ANSI_SIZE       = 0x7FFFFFFF
-
-}
-ABCC_SeverityType;
-
-
-/*------------------------------------------------------------------------------
-**
-** Enumeration of the different error codes of an error message.
-**
-**------------------------------------------------------------------------------
-*/
-
-typedef enum ABCC_ErrorCodeType
-{
-   /*
-   ** Error codes indicating that the ABCC driver is out of resources.
-   */
-
-   ABCC_EC_OUT_OF_QUEUES,
-   ABCC_EC_OUT_OF_BUFFERS,
-   ABCC_EC_OUT_OF_TIMERS,
-   ABCC_EC_TIMER_SYSTEM_MALFUNCTION,
-   ABCC_EC_RESOURCE_MISSING,
-   ABCC_EC_QUEUE_SELECTION_ERROR,
-
-
-   /*
-   ** Error code indicating that the operating mode selected is not correct.
-   */
-
-   ABCC_EC_INCORRECT_OPERATING_MODE,
-
-
-   /*
-   ** Error codes indicating serial fragmentation errors.
-   */
-
-   ABCC_EC_SERIAL_FRAG_ERROR,
-
-
-   /*
-   ** Parallel related error codes.
-   */
-
-   ABCC_EC_FALSE_PARALLEL_INT_GENERATED,
-   ABCC_EC_INCORRECT_INIT_HS_STATE,
-
-
-   /*
-   ** Driver state-machine related issues.
-   */
-
-   ABCC_EC_UNKNOWN_STATE_ENTERED,
-   ABCC_EC_STATE_TRANSITION_NOT_ALLOWED,
-
-
-   /*
-   ** Configuration state-machine related issues.
-   */
-
-   ABCC_EC_INVALID_MODULE_TYPE_RECEIVED,
-   ABCC_EC_INVALID_NETWORK_TYPE_RECEIVED,
-   ABCC_EC_INVALID_PARAM_SUPPORT_RECEIVED,
-   ABCC_EC_INVALID_DATA_FORMAT_RECEIVED,
-   ABCC_EC_ERROR_IN_READ_MAP_CONFIG,
-   ABCC_EC_ERROR_IN_WRITE_MAP_CONFIG,
-   ABCC_EC_ILLEGAL_CFG_STATE,
-
-
-   /*
-   ** Force the compiler to use a 16-bit variable as enumeration.
-   */
-
-   ABCC_EC_SET_ENUM_ANSI_SIZE       = 0x7FFFFFFF
-
-}
-ABCC_ErrorCodeType;
-
-
-/*------------------------------------------------------------------------------
-**
-** ABCC_StatusType
-**
-**------------------------------------------------------------------------------
-*/
-
-typedef enum ABCC_StatusType
-{
-   ABCC_STATUS_OK,
-   ABCC_STATUS_NOT_ALLOWED_DRIVER_STATE,
-   ABCC_STATUS_OUT_OF_RESOURCES
-
-}
-ABCC_StatusType;
-
-
-/*------------------------------------------------------------------------------
-**
-** ABCC_DataFormatType
-**
-**------------------------------------------------------------------------------
-*/
-
-typedef enum ABCC_DataFormatType
-{
-   ABCC_DF_LSB_FIRST       = 0,
-   ABCC_DF_MSB_FIRST       = 1
-}
-ABCC_DataFormatType;
-
-#endif  /* inclusion lock */
 
 /*******************************************************************************
 **
-** End of abcc_com.h
+** Private Globals
+**
+********************************************************************************
+*/
+
+/*------------------------------------------------------------------------------
+**
+** app_aacLanguages
+**
+**------------------------------------------------------------------------------
+**
+** Array of language strings. One string for each supported language.
+**
+**------------------------------------------------------------------------------
+*/
+
+extern UINT8* app_aacLanguages[];
+
+
+/*------------------------------------------------------------------------------
+**
+** app_sObject
+**
+**------------------------------------------------------------------------------
+**
+** Structure representing the APP object (instance 0).
+**
+**------------------------------------------------------------------------------
+*/
+
+extern const app_ObjectType app_sObject;
+
+
+/*------------------------------------------------------------------------------
+**
+** app_sInstance
+**
+**------------------------------------------------------------------------------
+**
+** Structure representing the APP instance.
+**
+**------------------------------------------------------------------------------
+*/
+
+extern app_InstanceType app_sInstance;
+
+
+/*******************************************************************************
+**
+** Public Services
+**
+********************************************************************************
+*/
+
+/*------------------------------------------------------------------------------
+**
+** APP_ProcessCmdMsg( )
+**
+** Processes commands sent to the APP object
+**
+**------------------------------------------------------------------------------
+**
+** Inputs:
+**    psNewMessage      - Pointer to a ABP_MsgType message.
+**
+** Outputs:
+**    -
+**
+** Usage:
+**    APP_ProcessCmdMsg( &sMessage );
+**
+**------------------------------------------------------------------------------
+*/
+
+EXTFUNC void APP_ProcessCmdMsg( ABP_MsgType* psNewMessage );
+
+
+/*******************************************************************************
+**
+** Private Services
+**
+********************************************************************************
+*/
+
+/*------------------------------------------------------------------------------
+**
+** void app_InstanceCommand( )
+**
+** Processes commands to Application Instance
+**
+**------------------------------------------------------------------------------
+**
+** Inputs:
+**    psNewMessage      - Pointer to a ABP_MsgType message.
+**
+** Outputs:
+**    -
+**
+** Usage:
+**    app_InstanceCommand( &sMessage );
+**
+**------------------------------------------------------------------------------
+*/
+
+void app_InstanceCommand( ABP_MsgType* psNewMessage );
+
+
+/*------------------------------------------------------------------------------
+**
+** app_ObjectCommand( )
+**
+** Processes commands to the Application Object (Instance 0)
+**
+**------------------------------------------------------------------------------
+**
+** Inputs:
+**    psNewMessage      - Pointer to a ABP_MsgType message.
+**
+** Outputs:
+**    -
+**
+** Usage:
+**    app_ObjectCommand( &sMessage );
+**
+**------------------------------------------------------------------------------
+*/
+
+void app_ObjectCommand( ABP_MsgType* psNewMessage );
+
+
+#endif  /* inclusion lock */
+
+
+/*******************************************************************************
+**
+** End of app.h
 **
 ********************************************************************************
 */
