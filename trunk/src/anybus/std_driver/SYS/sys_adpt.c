@@ -224,6 +224,8 @@ void SYS_ReStartSerialComm( UINT16 iReceptionLength )
    ** PORTING ALERT!
    ** Adapt this function to your platform.
    */
+   
+   	printf("SYS_ReStartSerialComm len=%d\n",iReceptionLength);
    	anybus_recv_len = iReceptionLength;
 	anybus_usart= usart_request("ttystm2");
 	if(anybus_usart){

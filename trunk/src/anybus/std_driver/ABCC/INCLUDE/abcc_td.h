@@ -130,11 +130,13 @@
 typedef unsigned char   BOOL8;
 typedef signed char     SINT8;
 typedef signed short    SINT16;
-typedef signed long     SINT32;
+typedef signed int      SINT32;
+typedef signed __int64  SINT64;
 
 typedef unsigned char   UINT8;
 typedef unsigned short  UINT16;
-typedef unsigned long   UINT32;
+typedef unsigned int    UINT32;
+typedef unsigned __int64 UINT64;
 typedef float           FLOAT32;
 
 

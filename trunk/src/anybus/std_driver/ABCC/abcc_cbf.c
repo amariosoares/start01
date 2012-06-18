@@ -54,27 +54,48 @@
 ********************************************************************************
 */
 
+#include "stdio.h"
+#include "includes.h"
+#include "utils.h"
 #include "abcc_td.h"
 #include "abcc_com.h"
 #include "sys_adpt.h"
 #include "abcc.h"
 
+#include "appd.h"
+#include "app.h"
+//#include "dev.h"
+#include "dpv1.h"
+#include "appc.h"
 
 /*******************************************************************************
 **
-** Public Globals
+** Public globals
 **
 ********************************************************************************
 */
 
-/*
-** Globals used for demonstration purpose only.
+/*------------------------------------------------------------------------------
+** ABCC_eAbccState
+**------------------------------------------------------------------------------
+*/
+#define ABCC_CBF_DBG 1
+ABP_AnbStateType        ABCC_eAbccState;
+
+
+/*******************************************************************************
+**
+** Private globals
+**
+********************************************************************************
 */
 
-ABCC_PdMapType      sMyReadMappings;
-ABCC_PdMapType      sMyWriteMappings;
-ABCC_PdAdiMapType   asReadAdi[ 2 ];
-ABCC_PdAdiMapType   asWriteAdi[ 2 ];
+/*------------------------------------------------------------------------------
+** abcc_fWdTimeout
+**------------------------------------------------------------------------------
+*/
+
+BOOL8                   abcc_fWdTimeout = FALSE;
 
 
 /*******************************************************************************
@@ -118,71 +139,10 @@ void ABCC_CbfAutoCfgRequest( UINT16 iModuleType,
    */
 
    /*
-   ** PORTING ALERT!
+   ** APPD handles the ADI to process data mapping
    */
-
-   /* ADD HANDLING OF EVENT */
-
-
-   /*
-   ** Example of application that wants no automatic process data configuration.
-   */
-
-/*
-   *ppsReadMappings   = NULL;
-   *ppsWriteMappings  = NULL;
-*/
-
-
-   /*
-   ** Example of application that wants automatic configuration.
-   **
-   ** Set-up the two ARRAY's of structures: asReadAdi and asWriteAdi with
-   ** the corresponding ADI's information.
-   **
-   ** ABCC_PdAdiMapType   asReadAdi[ 2 ];
-   ** ABCC_PdAdiMapType   asWriteAdi[ 2 ];
-   **
-   ** Attach them to the global structures holding the mapping informations.
-   ** ABCC_PdMapType MyReadMapping;
-   ** ABCC_PdMapType MyWriteMapping;
-   **
-   ** ...set the argument pointer to point to these structures
-   **
-   ** *ppsReadMappings  = &MyReadMapping;
-   ** *ppsWriteMappings = &MyWriteMapping;
-   */
-
-   asReadAdi[ 0 ].iAdiNbr         = (UINT16)3;
-   asReadAdi[ 0 ].bDataType       = (UINT8)ABP_SINT16;
-   asReadAdi[ 0 ].bNbrElements    = (UINT8)1;
-   asReadAdi[ 0 ].iOrderNumber    = (UINT16)1;
-
-   asReadAdi[ 1 ].iAdiNbr         = (UINT16)200;
-   asReadAdi[ 1 ].bDataType       = (UINT8)ABP_UINT32;
-   asReadAdi[ 1 ].bNbrElements    = (UINT8)1;
-   asReadAdi[ 1 ].iOrderNumber    = (UINT16)4;
-
-   sMyReadMappings.psMaps    = asReadAdi;
-   sMyReadMappings.iNbrMaps  = (UINT16)2;
-
-
-   asWriteAdi[ 0 ].iAdiNbr         = (UINT16)4;
-   asWriteAdi[ 0 ].bDataType       = (UINT8)ABP_SINT32;
-   asWriteAdi[ 0 ].bNbrElements    = (UINT8)1;
-   asWriteAdi[ 0 ].iOrderNumber    = (UINT16)2;
-
-   asWriteAdi[ 1 ].iAdiNbr         = (UINT16)24;
-   asWriteAdi[ 1 ].bDataType       = (UINT8)ABP_UINT8;
-   asWriteAdi[ 1 ].bNbrElements    = (UINT8)1;
-   asWriteAdi[ 1 ].iOrderNumber    = (UINT16)3;
-
-   sMyWriteMappings.psMaps    = asWriteAdi;
-   sMyWriteMappings.iNbrMaps  = (UINT16)2;
-
-
-   *ppsReadMappings   = &sMyReadMappings;
-   *ppsWriteMappings  = &sMyWriteMappings;
+  printf("modue_type=%d,iNetworkType=%d,fParameterSupport=%d\n",iModuleType,iNetworkType,fParameterSupport);
+   APPD_MapAdiToPd( ppsReadMappings, ppsWriteMappings );
 
 } /* End of ABCC_CbfAutoCfgRequest() */
 
@@ -197,15 +157,22 @@ void ABCC_CbfCfgCompleted( void )
    /*
    ** The driver has now completed the process data configuration. If the
    ** application is content with the configuration it is now time for the
-   ** application to set the "Setup complete" attribute.
+   ** application to set the “Setup complete” attribute.
    ** After that the application can start to communicate with the ABCC module.
    */
 
    /*
-   ** PORTING ALERT!
+   ** We start by initializing outgoing process data.
    */
 
-   /* ADD HANDLING OF EVENT */
+   APPD_ProcessDataChanged();
+
+   /*
+   ** Then we let the client finalise the setup procedure.
+   */
+
+   APPC_Init();
+   APPC_RunStateMachine();
 
 } /* End of ABCC_CbfCfgCompleted() */
 
@@ -215,29 +182,27 @@ void ABCC_CbfCfgCompleted( void )
 ** ABCC_CbfDebugInfo()
 **------------------------------------------------------------------------------
 */
-#include <stdio.h>
+
 void ABCC_CbfDebugInfo( UINT8* pabText )
 {
    /*
    ** Function enabling an application specific DEBUG channel.
-   ** This function might be very useful when starting to implement the driver.
-   ** When the implementation is completed this functionality should be
-   ** disabled by commenting away "#define ABCC_DRIVER_DEBUG" in file
-   ** "sys_adpt.h".
-   ** This debug information can be sent to, for example, to a serial channel,
-   ** a telnet terminal or a file.
    */
 
    /*
-   ** PORTING ALERT!
+   ** Make sure the line is cleared.
    */
 
-   /* e.g., printf( "%s \r\n", pabText ); */
+   printf( "                                                                      \r" );
 
-   /* ADD HANDLING OF EVENT */
-	printf( "%s \r\n", pabText );
+   /*
+   ** Print debug text.
+   */
+
+   printf( "%s\n", pabText );
 
 } /* End of ABCC_CbfDebugInfo() */
+
 #endif
 
 
@@ -256,10 +221,6 @@ void ABCC_CbfDriverError( ABCC_SeverityType eSeverity,
    /*
    ** PORTING ALERT!
    */
-
-#ifdef ABCC_DRIVER_DEBUG
-   ABCC_CbfDebugInfo( "ABCC_CbfDriverError() encountered!" );
-#endif
 
    /* ADD HANDLING OF EVENT */
 
@@ -311,8 +272,10 @@ void ABCC_CbfNetworkDataFormat( ABCC_DataFormatType eFormat )
    */
 
    /*
-   ** PORTING ALERT!
+   ** Report the network byte order to APPD
    */
+
+   APPD_SetNetworkByteOrder( eFormat );
 
 } /* End of ABCC_CbfNetworkDataFormat() */
 
@@ -330,74 +293,114 @@ void ABCC_CbfNewMsgFromAbcc( ABP_MsgType* psNewMessage )
    */
 
    /*
-   ** PORTING ALERT!
-   */
-
-   /* ADD HANDLING OF EVENT */
-
-
-   /*
    ** Example code of how these messages can be handled.
    */
-
-   if( ( psNewMessage->sHeader.bCmd & (UINT8)ABP_MSG_HEADER_C_BIT ) != (UINT8)0 )
+   int type = psNewMessage->sHeader.bCmd & (UINT8)ABP_MSG_HEADER_C_BIT ;
+   
+   DEBUG_LOG(ABCC_CBF_DBG,("type=%s\n", type?"cmd":"response"));
+   DEBUG_LOG(ABCC_CBF_DBG,("destobj=%d\n",psNewMessage->sHeader.bDestObj ));
+   DEBUG_LOG(ABCC_CBF_DBG,("inst=%d\n",psNewMessage->sHeader.iInstance));
+   DEBUG_LOG(ABCC_CBF_DBG,("cmd=%d\n",psNewMessage->sHeader.bCmd & ABP_MSG_HEADER_CMD_BITS));
+   if( ( psNewMessage->sHeader.bCmd & (UINT8)ABP_MSG_HEADER_C_BIT ) &&
+       ( psNewMessage->sHeader.bCmd & (UINT8)ABP_MSG_HEADER_E_BIT ) )
    {
       /*
-      ** This is a new command.
+      ** Invalid message format ( E and C bits set )
       */
 
-
-      /*
-      ** The application has got two options:
-      ** 1). The application can generate an answer to this request directly
-      **     and can send an answer directly to the ABCC module.
-      **
-      ** 2). The application cannot generate a quick response to this request.
-      **     Therefore the request needs to be copied and passed to some
-      **     "background" task that can handle the command request when resources
-      **     are available.
-      */
-
-
-      /* Option 1. */
-      /* Call some function that generates a response and return pointer to it*/
-      /* Send the response to the driver with ABCC_SendMessage()              */
-      /* Return this function                                                 */
-
-
-
-      /* Option 2. */
-      /* Allocate a chunk of memory.                                       */
-      /* Copy the request from psNewMessage to the newly allocated memory  */
-      /* Send the message (that were allocated) to some other resource.    */
-      /* Return this function                                              */
-
-
-      /*
-      ** Example handling:
-      ** Respond to the request with "Unsupported object". Of course this
-      ** code shall be removed once an application specific implementation of
-      ** this funcition is completed.
-      */
-
-      ABP_SetMsgErrorResponse( psNewMessage, 0, ABP_ERR_UNSUP_OBJ );
+      ABP_SetMsgErrorResponse( psNewMessage, 1, ABP_ERR_INV_MSG_FORMAT );
       ABCC_SendMessage( psNewMessage );
+   }
+   else if( ( psNewMessage->sHeader.bCmd & (UINT8)ABP_MSG_HEADER_C_BIT ) != (UINT8)0 )
+   {
 
+      /*
+      ** This is a new command - route to a server by Destination object.
+      */
+
+      switch( psNewMessage->sHeader.bDestObj )
+      {
+      case ABP_OBJ_NUM_APP:
+
+         /*
+         ** Destination: Application object.
+         */
+#ifdef ABCC_DRIVER_DEBUG
+         ABCC_CbfDebugInfo( "ABCC_CBF: Command msg to APP." );
+#endif
+         APP_ProcessCmdMsg( psNewMessage );
+
+         break;
+
+      case ABP_OBJ_NUM_APPD:
+
+         /*
+         ** Destination: Application data object.
+         */
+#ifdef ABCC_DRIVER_DEBUG
+         ABCC_CbfDebugInfo( "ABCC_CBF: Command msg to APPD." );
+#endif
+         APPD_ProcessCmdMsg( psNewMessage );
+
+         break;
+
+      case ABP_OBJ_NUM_DEV:
+
+         /*
+         ** Destination: DeviceNet object.
+         */
+#ifdef ABCC_DRIVER_DEBUG
+         ABCC_CbfDebugInfo( "ABCC_CBF: Command msg to DEV." );
+#endif
+         DEV_ProcessCmdMsg( psNewMessage );
+         break;
+
+      case ABP_OBJ_NUM_DPV1:
+
+         /*
+         ** Destination: Profibus DPV1 object.
+         */
+#ifdef ABCC_DRIVER_DEBUG
+         ABCC_CbfDebugInfo( "ABCC_CBF: Command msg to DPV1." );
+#endif
+         DPV1_ProcessCmdMsg( psNewMessage );
+         break;
+
+      default:
+
+         /*
+         ** Couldn't find a server object to route the command to.
+         ** Return an unsupported object error response.
+         */
+#ifdef ABCC_DRIVER_DEBUG
+            ABCC_CbfDebugInfo( "ABCC_CBF: Command msg to unsupported object." );
+#endif
+         ABP_SetMsgErrorResponse( psNewMessage, 1, ABP_ERR_UNSUP_OBJ );
+
+         ABCC_SendMessage( psNewMessage );
+
+         break;
+
+      } /* end switch( Destination object ) */
    }
    else
    {
+
       /*
-      ** This message is a response to one of the commands that are sent from
-      ** the application.
-      ** Please note that if several Commands are sent from the application
-      ** before the ABCC has answered the first, it cannot be guaranteed that
-      ** the responses are sent from the ABCC in the order the commands are
-      ** received. Therefore, it is vital that the "bSourceId" is used wisely,
-      ** since it is a good way of telling what command the response message
-      ** corresponds to.
+      ** It's a response - route to the client that uses this Source ID.
+      **
+      ** A suggested approach is to let every client reserve and use a
+      ** fixed number of the available Source ID's.
+      ** Each client is then responsible for keeping track of individual
+      ** messages.
+      **
+      ** However, in this example, there is only one client (the APPC), so
+      ** all responses are routed there.
       */
 
-   } /* End if( Message == Command ) */
+      APPC_ProcessRespMsg( psNewMessage );
+
+   } /* End if( Control Error and Command bits ) */
 
 } /* End of ABCC_CbfNewMsgFromAbcc() */
 
@@ -412,34 +415,140 @@ void ABCC_CbfNewReadPd( UINT8 bAbccStatus,
                         UINT16 iPdReadLength,
                         UINT8* pabData )
 {
+   static char   aabStates[8][16] = { { "SETUP" }, { "NW_INIT" }, { "WAIT_PROCESS" }, { "IDLE" }, { "PROCESS_ACTIVE" }, { "ERROR" }, { "" }, { "EXCEPTION" } };
+   static ABP_AnbStateType eAbccPrevState;
+   BOOL8                   fAbccSupervised;
+   
+
    /*
    ** This function indicates that the driver has received new data from the
-   ** ABCC module or if the ABCC status is changed.
-   ** Please note that the pointer to the data (pabData) is not valid when
-   ** this function has returned.
+   ** ABCC module and/or that the ABCC status is changed.
    */
 
    /*
    ** PORTING ALERT!
    */
 
-   if( fNewData )
+   /*
+   ** Get the ABCC state and supvervised bit.
+   */
+
+   ABCC_eAbccState   = (ABP_AnbStateType)( bAbccStatus & ABP_STAT_S_BITS );
+   fAbccSupervised   = (ABP_AnbStateType)( bAbccStatus & ABP_STAT_SUP_BIT );
+
+   if( ABCC_eAbccState != eAbccPrevState )
    {
       /*
-      ** New Process data received. Possibly the Status is also new.
+      ** Make sure the line is cleared.
       */
 
-      /* ADD HANDLING OF EVENT */
+      printf( "                                                                      \r" );
+      printf("ABCC state: %s\n", aabStates[ ABCC_eAbccState ] );
    }
-   else
+
+   if( !abcc_fWdTimeout )
    {
-      /*
-      ** The Status is updated. The process data is NOT updated.
-      */
+      switch( ABCC_eAbccState )
+      {
+      case ABP_ANB_STATE_PROCESS_ACTIVE:
+   
+         /*
+         ** The network process data channel is active and error free.
+         ** The application should perform normal data handling.
+         */
+   
+         if( fNewData || ( eAbccPrevState != ABP_ANB_STATE_PROCESS_ACTIVE ) )
+         {
+            /*
+            ** The read process data is both valid and changed.
+            */
+   
+            APPD_CbfNewReadProcessData();
+         }
+   
+         break;
+   
+      case ABP_ANB_STATE_SETUP:
+      case ABP_ANB_STATE_NW_INIT:
+   
+         /*
+         ** Initialisation states.
+         ** Read process data is not yet valid.
+         **
+         ** The application should keep write process data updated in state
+         ** NW_INIT (initial data) since the data is buffered by the ABCC
+         ** and may be sent to the network after a state switch.
+         ** We make sure of this by calling APPD_ProcessDataChanged() in
+         ** ABCC_CbfCfgCompleted().
+         */
+   
+         break;
+   
+      case ABP_ANB_STATE_WAIT_PROCESS:
+   
+         /*
+         ** The network process data channel is not active.
+         ** The application should regard read process data as not valid.
+         **
+         ** The application should keep write process data updated in this
+         ** state since the data is buffered by the ABCC and may be sent
+         ** to the network after a state switch.
+         */
+   
+         break;
+   
+      case ABP_ANB_STATE_IDLE:
+   
+         /*
+         ** The network device is in idle mode (the definition of this mode is
+         ** network specific).
+         ** Depending on the network type, the read process data may be either
+         ** updated or static (unchanged)
+         **
+         ** The application should keep write process data updated in this
+         ** state since the data is buffered by the ABCC and may be sent
+         ** to the network after a state switch.
+         */
+   
+         break;
+   
+      case ABP_ANB_STATE_ERROR:
+   
+         /*
+         ** There is at least one serious network error.
+         **
+         ** The application should regard read process data as not valid
+         ** and may take optional network specific actions.
+         */
+   
+         break;
+   
+      case ABP_ANB_STATE_EXCEPTION:
+   
+         /*
+         ** Further network communication has been stopped by the ABCC due
+         ** to an application error (invalid network configuration parameter,
+         ** timeout etc.) or because the ABCC is waiting for a reset to be
+         ** executed. Details can be read from the Anybus object.
+         **
+         ** Suggested actions: correct any errors and reset the ABCC.
+         */
+   
+         break;
+   
+      default:
+   
+         /*
+         ** Unknown ABCC state.
+         */
+   
+         break;
+   
+      } /* End switch( ABCC state ) */
 
-      /* ADD HANDLING OF EVENT */
-
-   } /* End if( fNewData ) */
+      eAbccPrevState = ABCC_eAbccState;
+      
+   } /* End if( !abcc_fWdTimeout ) */
 
 } /* End of ABCC_CbfNewReadPd() */
 
@@ -455,24 +564,7 @@ void ABCC_CbfRequestPdSize( UINT16* piReadLength, UINT16* piWriteLength )
    ** This function will request the process data lengths from the application.
    */
 
-   /*
-   ** PORTING ALERT!
-   */
-
-   /* ADD HANDLING OF EVENT */
-
-   /*
-   ** Application needs to fill in the correct Process Data READ length.
-   */
-
-   *piReadLength = (UINT16)6;
-
-
-   /*
-   ** Application needs to fill in the correct Process Data WRITE length.
-   */
-
-   *piWriteLength = (UINT16)5;
+   APPD_CbfRequestPdSize( piReadLength, piWriteLength );
 
 } /* End of ABCC_CbfRequestPdSize() */
 
@@ -535,6 +627,15 @@ void ABCC_CbfWdTimeout( void )
    ** PORTING ALERT!
    */
 
+   abcc_fWdTimeout = TRUE;
+
+   /*
+   ** Make sure the line is cleared.
+   */
+
+   printf( "                                                                      \r" );
+   printf( "Connection to ABCC lost!\n" );
+
    /* ADD HANDLING OF EVENT */
 
 } /* End of ABCC_CbfWdTimeout() */
@@ -551,6 +652,15 @@ void ABCC_CbfWdTimeoutRecovered( void )
    ** This function signals that we have previously had a ABCC watchdog timeout,
    ** but now the communication works again.
    */
+
+   abcc_fWdTimeout = FALSE;
+
+   /*
+   ** Make sure the line is cleared.
+   */
+
+   printf( "                                                                      \r" );
+   printf( "Connection to ABCC Recovered.\n" );
 
    /*
    ** PORTING ALERT!

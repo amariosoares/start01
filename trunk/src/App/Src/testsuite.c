@@ -132,6 +132,7 @@ void network_test(void)
 	network_send_data(CHAN_ETH0,net_text, strlen(net_text));
 }
 #endif
+#include "abcc.h"
 void TestSuiteJob(void *tid , void * arg) 
 {
 	
@@ -139,6 +140,9 @@ void TestSuiteJob(void *tid , void * arg)
 	//network_test();
 #endif
 	test_led();
+if( ( ABCC_eAbccState == ABP_ANB_STATE_WAIT_PROCESS) )
+	APPD_ProcessDataChanged();
+
 #if 0
 	test_rtc();
 	test_fm25l16();
@@ -198,8 +202,11 @@ static void anybus_init(void)
 	mdelay(100);
 	gpio_set_value(ANYBUS_RESET_GPIO,1);
 	
+	APPC_SetSwitch1( (UINT8)60 );
+	APPC_SetSwitch2( (UINT8)3 );
 	ABCC_StartDriver();
 	
+	APPD_ProcessDataChanged();
 	dev = request_timer(1);
 	
 	if(dev == NULL) return ;
