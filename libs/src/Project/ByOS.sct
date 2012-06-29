@@ -5,7 +5,9 @@
 
 LR_IROM1 0x08000000 0x00040000  {    ; load region size_region
   ER_IROM1 0x08000000 0x00040000  {  ; load address = execution address
-   *.o (RESET, +First)
+   ;*.o (RESET, +First)
+   ;start01.lib (RESET, +First)
+   *.o (+RO)
    *(InRoot$$Sections)
    .ANY (+RO)
   }
