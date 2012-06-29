@@ -147,7 +147,7 @@ void dpv1_InstanceCommand( ABP_MsgType* psNewMessage )
       ABP_SetMsgErrorResponse( psNewMessage, 1, ABP_ERR_UNSUP_INST );
       return;
    }
-
+   printf("extcmd=%d\n",psNewMessage->sHeader.bCmdExt0);
    switch ( psNewMessage->sHeader.bCmd & ABP_MSG_HEADER_CMD_BITS )
    {
    case ABP_CMD_GET_ATTR:
@@ -212,7 +212,8 @@ void dpv1_InstanceCommand( ABP_MsgType* psNewMessage )
          /*
          ** Verify data size
          */
-
+	
+          printf("bDataSize=%d\n",psNewMessage->sHeader.bDataSize);
          if( psNewMessage->sHeader.bDataSize > ( DPV1_PRM_STANDARD_BYTES +
                DPV1_PRM_DPV1_STATUS_BYTES + DPV1_PRM_APPL_SPECIFIC_BYTES ) )
          {

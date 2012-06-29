@@ -1943,10 +1943,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>27</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>144</TopLine>
+      <CurrentLine>152</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\anybus\std_driver\DPV1\dpv1.c</PathWithFileName>
       <FilenameWithoutPath>dpv1.c</FilenameWithoutPath>
@@ -2088,8 +2088,14 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>4</ActiveTab>
+      <ActiveTab>0</ActiveTab>
       <Documents>
+        <Doc>
+          <Name>..\anybus\std_driver\DPV1\dpv1.c</Name>
+          <ColumnNumber>27</ColumnNumber>
+          <TopLine>144</TopLine>
+          <CurrentLine>152</CurrentLine>
+        </Doc>
         <Doc>
           <Name>..\Bsp\Src\timer.c</Name>
           <ColumnNumber>0</ColumnNumber>
