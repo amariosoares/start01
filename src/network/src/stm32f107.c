@@ -76,10 +76,11 @@ bool System_Setup(void)
  
   /* Configure the Ethernet peripheral */
   if(!Ethernet_Configuration()) return false;
-
+	
   /* SystTick configuration: an interrupt every 10ms */
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 100);
+  printf("System_Setup ok\n");
   return true;
  
 }

@@ -133,6 +133,7 @@ void network_test(void)
 }
 #endif
 #include "abcc.h"
+#include "appd.h"
 void TestSuiteJob(void *tid , void * arg) 
 {
 	
@@ -140,9 +141,12 @@ void TestSuiteJob(void *tid , void * arg)
 	//network_test();
 #endif
 	test_led();
-if( ( ABCC_eAbccState == ABP_ANB_STATE_WAIT_PROCESS) )
+if( ( ABCC_eAbccState == ABP_ANB_STATE_PROCESS_ACTIVE) )
+{
+	static int spd = 0;
+ 	APPD_iRefSpeed = spd++;
 	APPD_ProcessDataChanged();
-
+}
 #if 0
 	test_rtc();
 	test_fm25l16();
