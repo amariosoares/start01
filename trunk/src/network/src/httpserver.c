@@ -182,9 +182,9 @@ static err_t http_sent(void *arg, struct tcp_pcb *pcb, u16_t len)
     if(resetpage ==1)
     {
       /* generate a watchdog reset */
-      //RCC_APB1PeriphClockCmd(RCC_APB1Periph_WWDG, ENABLE);
-      //WWDG_Enable(0x40);
-      //while(1);
+      RCC_APB1PeriphClockCmd(RCC_APB1Periph_WWDG, ENABLE);
+      WWDG_Enable(0x40);
+      while(1);
     }
       
   }

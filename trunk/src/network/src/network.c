@@ -15,6 +15,9 @@
 __IO uint32_t LocalTime = 0; /* this variable is used to create a time reference incremented by 10ms */
 static u8 udp_send_ad_flag = 0;
 static u8 net_init_ok = 0;
+static int int_var1,int_var2,int_var3,int_var4;
+static float float_var1,float_var2,float_var3,float_var4;
+
 void Time_Update(void)
 {
   LocalTime += SYSTEMTICK_PERIOD_MS;
@@ -341,9 +344,20 @@ static struct TCmd cmd_list[] = {
 	CMD_ITEM(DIR_WRITE, CMD_UDP_IP,	  net_cmd_parse),	
 	CMD_ITEM(DIR_WRITE, CMD_UDP_PORT,	  net_cmd_parse),	
 };
+static  TVarItem var_list[]={
+		{CMD_READ_INT1,sizeof(int),&int_var1,VAR_UPDATE_MEMORY},	
+		{CMD_READ_INT2,sizeof(int),&int_var2,VAR_UPDATE_MEMORY},
+		{CMD_READ_INT3,sizeof(int),&int_var3,VAR_UPDATE_MEMORY},
+		{CMD_READ_INT4,sizeof(int),&int_var4,VAR_UPDATE_MEMORY},
+		{CMD_READ_FLOAT1,sizeof(float),&float_var1,VAR_UPDATE_MEMORY},
+		{CMD_READ_FLOAT2,sizeof(float),&float_var2,VAR_UPDATE_MEMORY},
+		{CMD_READ_FLOAT3,sizeof(float),&float_var3,VAR_UPDATE_MEMORY},
+		{CMD_READ_FLOAT4,sizeof(float),&float_var4,VAR_UPDATE_MEMORY},
+};
 void network_var_init(void)
 {
 	
+	RegisterAutoVarList(var_list,ARRAY_SIZE(var_list));
 }
 
 #define PHY_RESET_PIN_MODE		GPIO_PORTB|GPIO_OUT_PP|GPIO_50MHZ|5
@@ -351,18 +365,27 @@ void network_var_init(void)
 
 void phy_reset(void)
 {
-	gpio_set_mode(PHY_RESET_PIN);
+	gpio_set_mode(PHY_RESET_PIN_MODE);
 	gpio_set_value(PHY_RESET_PIN,1);
+	gpio_set_value(PHY_RESET_PIN,0);
+	mdelay(100); 
+	gpio_set_value(PHY_RESET_PIN,1);
+	mdelay(100); 
 	gpio_set_value(PHY_RESET_PIN,0);
 	mdelay(100); 
 	gpio_set_value(PHY_RESET_PIN,1);
 	
 }
+
+void init_param(void)
+{
+
+}
 int network_init(void)
 {
 	DEBUG_FUNC();
 
-
+	network_var_init();
 	//phy_reset();
 	/* Setup STM32 system (clocks, Ethernet, GPIO, NVIC) and STM3210C-EVAL resources */
 	if(!System_Setup()){
@@ -376,15 +399,13 @@ int network_init(void)
 
 	//return mongoo_start();
 
-	IAP_httpd_init();
+	//IAP_httpd_init();
 
 	net_init_ok = 1;
-	
-	return 1;
 
 	//RegisterAutoVar(CMD_NET_SEND_AD,1,&udp_send_ad_flag,VAR_UPDATE_MEMORY);
 	
-	//return network_server_init();
+	return network_server_init();
 }
 device_initcall(network_init);
 
