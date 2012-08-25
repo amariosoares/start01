@@ -23,7 +23,7 @@ void Time_Update(void)
   LocalTime += SYSTEMTICK_PERIOD_MS;
 }
 
-#if ( (DEVICE_NETWORK_EN > 0) && (SYS_MODE == SYS_MODE_MASTER))
+#if ( DEVICE_NETWORK_EN > 0 )
 #define SERVER_PORT  8000
 
 /* Private macro -------------------------------------------------------------*/

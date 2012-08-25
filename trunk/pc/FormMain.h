@@ -68,10 +68,13 @@ __published:	// IDE-managed Components
     void __fastcall lbledt_fl4DblClick(TObject *Sender);
     void __fastcall lbledt_dateDblClick(TObject *Sender);
     void __fastcall lbledt_timeDblClick(TObject *Sender);
+    void __fastcall lbledt_int1KeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
 
 private:	// User declarations
 void __fastcall ReadParam(UINT8 cmd);
 void __fastcall ParseData(void);
+void __fastcall WriteIntParam(UINT8 code,int value);
 void __fastcall DealData(TCommMsg* msg);
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

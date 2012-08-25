@@ -107,6 +107,10 @@ static int Var_Auto_Update_Service(TCommMsg* msg)
 
 u8 	  RegisterAutoVar(u8 cmd,u8 var_size,void* var_addr,u8 var_type)
 {
+	if(!_hasInit){
+		Init_CmdList();
+		_hasInit = 1;
+	}
 	if(cmd >= MAX_CMD_NUM) return 0;
 
 	if(var_size > 4) return 0;
