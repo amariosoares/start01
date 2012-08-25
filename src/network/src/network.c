@@ -345,14 +345,14 @@ static struct TCmd cmd_list[] = {
 	CMD_ITEM(DIR_WRITE, CMD_UDP_PORT,	  net_cmd_parse),	
 };
 static  TVarItem var_list[]={
-		{CMD_READ_INT1,sizeof(int),&int_var1,VAR_UPDATE_MEMORY},	
-		{CMD_READ_INT2,sizeof(int),&int_var2,VAR_UPDATE_MEMORY},
-		{CMD_READ_INT3,sizeof(int),&int_var3,VAR_UPDATE_MEMORY},
-		{CMD_READ_INT4,sizeof(int),&int_var4,VAR_UPDATE_MEMORY},
-		{CMD_READ_FLOAT1,sizeof(float),&float_var1,VAR_UPDATE_MEMORY},
-		{CMD_READ_FLOAT2,sizeof(float),&float_var2,VAR_UPDATE_MEMORY},
-		{CMD_READ_FLOAT3,sizeof(float),&float_var3,VAR_UPDATE_MEMORY},
-		{CMD_READ_FLOAT4,sizeof(float),&float_var4,VAR_UPDATE_MEMORY},
+		{CMD_READ_INT1,sizeof(int),&int_var1,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},	
+		{CMD_READ_INT2,sizeof(int),&int_var2,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_INT3,sizeof(int),&int_var3,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_INT4,sizeof(int),&int_var4,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_FLOAT1,sizeof(float),&float_var1,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_FLOAT2,sizeof(float),&float_var2,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_FLOAT3,sizeof(float),&float_var3,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_FLOAT4,sizeof(float),&float_var4,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
 };
 void network_var_init(void)
 {
