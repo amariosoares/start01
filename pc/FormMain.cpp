@@ -103,7 +103,25 @@ void __fastcall TForm1::ReadParam(UINT8 code)
         m_Skt->SendBuf(cmd,11);
       }
 }
-
+void __fastcall TForm1::WriteIntParam(UINT8 code,int value)
+{
+      UINT8 cmd[11];
+      cmd[0] = 0xFE;
+      cmd[1] = 0x7F;
+      cmd[2] = 0x0;
+      cmd[3] = 0x0;
+      cmd[4] = DIR_WRITE;
+      cmd[5] = code;
+      cmd[6] = value>>24;
+      cmd[7] = value>>16;;
+      cmd[8] = value>>8;
+      cmd[9] = value;
+      cmd[10] = checkSum(cmd,10);
+      if(m_Skt)
+      {
+        m_Skt->SendBuf(cmd,11);
+      }
+}
 
 void __fastcall TForm1::lbledt_int1DblClick(TObject *Sender)
 {
@@ -111,7 +129,7 @@ void __fastcall TForm1::lbledt_int1DblClick(TObject *Sender)
 }
 void __fastcall TForm1::DealData(TCommMsg* msg)
 {
-    if(msg->dir == DIR_READ)
+    //if(msg->dir == DIR_READ)
     {
         if(msg->cmd == CMD_READ_INT1)
         {
@@ -258,6 +276,18 @@ void __fastcall TForm1::lbledt_dateDblClick(TObject *Sender)
 void __fastcall TForm1::lbledt_timeDblClick(TObject *Sender)
 {
      ReadParam(CMD_READ_TIME);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_int1KeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+      if(Key == 13)
+      {
+          WriteIntParam(CMD_READ_INT1, lbledt_int1->Text.ToInt());
+          lbledt_int1->Clear();
+          ReadParam(CMD_READ_INT1);
+      }
 }
 //---------------------------------------------------------------------------
 
