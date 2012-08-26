@@ -70,6 +70,12 @@ __published:	// IDE-managed Components
     void __fastcall lbledt_timeDblClick(TObject *Sender);
     void __fastcall lbledt_int1KeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
+    void __fastcall lbledt_int2KeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall lbledt_int3KeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall lbledt_int4KeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
 
 private:	// User declarations
 void __fastcall ReadParam(UINT8 cmd);

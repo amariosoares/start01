@@ -9,6 +9,7 @@
 #include "network.h"
 #include "gpio.h"
 #include "clock.h"
+#include "paramcfg.h"
 
 #define SYSTEMTICK_PERIOD_MS  10
 
@@ -357,7 +358,20 @@ static  TVarItem var_list[]={
 void network_var_init(void)
 {
 	
+	static struct Param_Device*  fm25l16_dev = NULL;
+	fm25l16_dev = Param_dev_Request(DEV_FM25L16);
 	RegisterAutoVarList(var_list,ARRAY_SIZE(var_list));
+	if(fm25l16_dev)
+	{
+		int_var1 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT1),0);
+		int_var2 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT2),0);
+		int_var3 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT3),0);
+		int_var4 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT4),0);
+		float_var1 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT1),0);
+		float_var2 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT2),0);
+		float_var3 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT3),0);
+		float_var4 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT4),0);	
+	}
 }
 
 #define PHY_RESET_PIN_MODE		GPIO_PORTB|GPIO_OUT_PP|GPIO_50MHZ|5
