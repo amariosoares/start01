@@ -45,6 +45,10 @@ const char send_text[] = {0xab,0xcd,0,1,2,3,4};
 
 //#define CMBUS_FO_MODE 		GPIO_PORTD|GPIO_OUT_PP|GPIO_50MHZ|2
 
+static int     int_var1,int_var2,int_var3,int_var4;
+static float float_var1,float_var2,float_var3,float_var4;
+
+
 static int test_led(void)
 {
 #if 1	
@@ -220,6 +224,68 @@ static void anybus_init(void)
 			return;
 	}
 }
+u8 test_cmd_parse(TDataChan *src,TCommMsg* msg)
+{
+	if( msg->dir == DIR_READ)
+	{
+		if((msg->cmd == CMD_READ_TIME) || (msg->cmd == CMD_READ_DATE))
+		{
+			TZipDateTimeDef zdt;
+			if(get_zipdatetime(&zdt))
+			{
+				msg->param.u32_val = zdt.value;
+			}
+			
+		}
+
+	}else if(msg->cmd == DIR_WRITE){
+
+		if((msg->cmd == CMD_READ_TIME) || (msg->cmd == CMD_READ_DATE))
+		{
+			TZipDateTimeDef zdt;
+			zdt.value = msg->param.u32_val ;
+			set_zipdatetime(&zdt);	
+		}
+	}
+	
+	return 0;
+}
+
+static  TVarItem var_list[]={
+		{CMD_READ_INT1,sizeof(int),&int_var1,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},	
+		{CMD_READ_INT2,sizeof(int),&int_var2,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_INT3,sizeof(int),&int_var3,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_INT4,sizeof(int),&int_var4,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_FLOAT1,sizeof(float),&float_var1,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_FLOAT2,sizeof(float),&float_var2,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_FLOAT3,sizeof(float),&float_var3,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_READ_FLOAT4,sizeof(float),&float_var4,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+};
+static struct TCmd cmd_list[] = {
+	CMD_ITEM(DIR_READ,    CMD_READ_DATE,	 test_cmd_parse),
+	CMD_ITEM(DIR_WRITE, CMD_READ_DATE,	  test_cmd_parse),		
+	CMD_ITEM(DIR_READ,    CMD_READ_TIME,	 test_cmd_parse),
+	CMD_ITEM(DIR_WRITE, CMD_READ_TIME,	  test_cmd_parse),	
+}; 
+
+void test_var_init(void)
+{
+	RegisterAutoVarList(var_list,ARRAY_SIZE(var_list));
+	
+	RegisterCmdList(cmd_list,ARRAY_SIZE(cmd_list));
+	if(fm25l16_dev)
+	{
+		int_var1 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT1),0);
+		int_var2 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT2),0);
+		int_var3 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT3),0);
+		int_var4 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT4),0);
+		float_var1 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT1),0);
+		float_var2 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT2),0);
+		float_var3 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT3),0);
+		float_var4 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT4),0);	
+	}
+}
+
 static int test_suite_init(void)
 {
 	u8 ret = 0;
@@ -257,6 +323,8 @@ static int test_suite_init(void)
 
 	gpio_set_mode(CMBUS_RXTX_MODE);
 	gpio_set_mode(ANYBUS_RESET_MODE);
+
+	test_var_init();
 	return 1;
 }
 module_initcall(test_suite_init);
