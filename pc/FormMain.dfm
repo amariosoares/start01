@@ -76,6 +76,7 @@ object Form1: TForm1
       LabelSpacing = 3
       TabOrder = 1
       OnDblClick = lbledt_int2DblClick
+      OnKeyUp = lbledt_int2KeyUp
     end
     object lbledt_int3: TLabeledEdit
       Left = 32
@@ -89,6 +90,7 @@ object Form1: TForm1
       LabelSpacing = 3
       TabOrder = 2
       OnDblClick = lbledt_int3DblClick
+      OnKeyUp = lbledt_int3KeyUp
     end
     object lbledt_int4: TLabeledEdit
       Left = 32
@@ -102,6 +104,7 @@ object Form1: TForm1
       LabelSpacing = 3
       TabOrder = 3
       OnDblClick = lbledt_int4DblClick
+      OnKeyUp = lbledt_int4KeyUp
     end
     object lbledt_fl1: TLabeledEdit
       Left = 168

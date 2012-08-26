@@ -291,3 +291,40 @@ void __fastcall TForm1::lbledt_int1KeyUp(TObject *Sender, WORD &Key,
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::lbledt_int2KeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+       if(Key == 13)
+      {
+          WriteIntParam(CMD_READ_INT2, lbledt_int2->Text.ToInt());
+          lbledt_int2->Clear();
+          ReadParam(CMD_READ_INT2);
+      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_int3KeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+       if(Key == 13)
+      {
+          WriteIntParam(CMD_READ_INT3, lbledt_int3->Text.ToInt());
+          lbledt_int3->Clear();
+          ReadParam(CMD_READ_INT3);
+      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_int4KeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+       if(Key == 13)
+      {
+          WriteIntParam(CMD_READ_INT4, lbledt_int4->Text.ToInt());
+          lbledt_int4->Clear();
+          ReadParam(CMD_READ_INT4);
+      }
+}
+//---------------------------------------------------------------------------
+
+

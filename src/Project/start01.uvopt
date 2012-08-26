@@ -1068,7 +1068,7 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>7</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>270</TopLine>
       <CurrentLine>270</CurrentLine>
@@ -1299,7 +1299,7 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>102</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>290</TopLine>
       <CurrentLine>302</CurrentLine>
@@ -1982,7 +1982,7 @@
         </Doc>
         <Doc>
           <Name>..\App\Src\DebugComm.c</Name>
-          <ColumnNumber>7</ColumnNumber>
+          <ColumnNumber>0</ColumnNumber>
           <TopLine>270</TopLine>
           <CurrentLine>270</CurrentLine>
         </Doc>
@@ -1994,9 +1994,9 @@
         </Doc>
         <Doc>
           <Name>..\network\src\network.c</Name>
-          <ColumnNumber>102</ColumnNumber>
-          <TopLine>290</TopLine>
-          <CurrentLine>302</CurrentLine>
+          <ColumnNumber>18</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>12</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
