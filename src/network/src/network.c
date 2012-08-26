@@ -16,8 +16,6 @@
 __IO uint32_t LocalTime = 0; /* this variable is used to create a time reference incremented by 10ms */
 static u8 udp_send_ad_flag = 0;
 static u8 net_init_ok = 0;
-static int int_var1,int_var2,int_var3,int_var4;
-static float float_var1,float_var2,float_var3,float_var4;
 
 void Time_Update(void)
 {
@@ -345,34 +343,6 @@ static struct TCmd cmd_list[] = {
 	CMD_ITEM(DIR_WRITE, CMD_UDP_IP,	  net_cmd_parse),	
 	CMD_ITEM(DIR_WRITE, CMD_UDP_PORT,	  net_cmd_parse),	
 };
-static  TVarItem var_list[]={
-		{CMD_READ_INT1,sizeof(int),&int_var1,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},	
-		{CMD_READ_INT2,sizeof(int),&int_var2,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
-		{CMD_READ_INT3,sizeof(int),&int_var3,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
-		{CMD_READ_INT4,sizeof(int),&int_var4,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
-		{CMD_READ_FLOAT1,sizeof(float),&float_var1,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
-		{CMD_READ_FLOAT2,sizeof(float),&float_var2,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
-		{CMD_READ_FLOAT3,sizeof(float),&float_var3,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
-		{CMD_READ_FLOAT4,sizeof(float),&float_var4,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
-};
-void network_var_init(void)
-{
-	
-	static struct Param_Device*  fm25l16_dev = NULL;
-	fm25l16_dev = Param_dev_Request(DEV_FM25L16);
-	RegisterAutoVarList(var_list,ARRAY_SIZE(var_list));
-	if(fm25l16_dev)
-	{
-		int_var1 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT1),0);
-		int_var2 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT2),0);
-		int_var3 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT3),0);
-		int_var4 = Param_ReadInteger(fm25l16_dev,GET_OFFSET(CMD_READ_INT4),0);
-		float_var1 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT1),0);
-		float_var2 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT2),0);
-		float_var3 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT3),0);
-		float_var4 = Param_ReadFloat(fm25l16_dev,GET_OFFSET(CMD_READ_FLOAT4),0);	
-	}
-}
 
 #define PHY_RESET_PIN_MODE		GPIO_PORTB|GPIO_OUT_PP|GPIO_50MHZ|5
 #define PHY_RESET_PIN           GPIO_NR(PB,5)
@@ -398,8 +368,6 @@ void init_param(void)
 int network_init(void)
 {
 	DEBUG_FUNC();
-
-	network_var_init();
 	//phy_reset();
 	/* Setup STM32 system (clocks, Ethernet, GPIO, NVIC) and STM3210C-EVAL resources */
 	if(!System_Setup()){

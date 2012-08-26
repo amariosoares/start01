@@ -14,6 +14,7 @@
 #include <Buttons.hpp>
 #include <ExtCtrls.hpp>
 #include <ScktComp.hpp>
+#include <Menus.hpp>
 //---------------------------------------------------------------------------
 
 typedef struct __packed{
@@ -53,6 +54,9 @@ __published:	// IDE-managed Components
     TLabeledEdit *lbledt_fl4;
     TLabeledEdit *lbledt_date;
     TLabeledEdit *lbledt_time;
+    TMainMenu *mm1;
+    TMenuItem *N1;
+    TMenuItem *N2;
     void __fastcall btnConnClick(TObject *Sender);
     void __fastcall sktConnect(TObject *Sender, TCustomWinSocket *Socket);
     void __fastcall sktDisconnect(TObject *Sender,
@@ -76,12 +80,26 @@ __published:	// IDE-managed Components
           TShiftState Shift);
     void __fastcall lbledt_int4KeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
+    void __fastcall lbledt_fl1KeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall lbledt_fl2KeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall lbledt_fl3KeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall lbledt_fl4KeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall N2Click(TObject *Sender);
+    void __fastcall lbledt_dateKeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall lbledt_timeKeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
 
 private:	// User declarations
 void __fastcall ReadParam(UINT8 cmd);
 void __fastcall ParseData(void);
 void __fastcall WriteIntParam(UINT8 code,int value);
 void __fastcall DealData(TCommMsg* msg);
+void __fastcall WriteFloatParam(UINT8 code,float value);
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);
 };

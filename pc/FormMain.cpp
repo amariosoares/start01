@@ -34,6 +34,34 @@ typedef enum{
     CMD_READ_DATE,
     CMD_READ_TIME
 }TCmdType;
+
+typedef struct{
+	UINT16 year;
+	UINT8  mon;
+	UINT8  day;
+	UINT8  week;
+	UINT8  hour;
+	UINT8  min;
+	UINT8  sec;	
+}TMyDateTime;
+
+typedef struct{
+	unsigned  sec:6;
+	unsigned  min:6;
+	unsigned  hour:5;
+	unsigned  day:5;
+	unsigned  mon:4;
+	unsigned  year:6;
+}TZipDateTime;
+
+typedef union 
+{
+	TZipDateTime dt;
+	unsigned     value;
+}TZipDateTimeDef;
+
+
+#include <dos.h>
 static TCommMsg __CommMsg;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -123,6 +151,32 @@ void __fastcall TForm1::WriteIntParam(UINT8 code,int value)
       }
 }
 
+void __fastcall TForm1::WriteFloatParam(UINT8 code,float value)
+{
+      UINT8 cmd[11];
+
+      typedef union{
+		float f32_val;
+        UINT8 pad[4];
+      }TFParam;
+      TFParam fp;
+      fp.f32_val = value;
+      cmd[0] = 0xFE;
+      cmd[1] = 0x7F;
+      cmd[2] = 0x0;
+      cmd[3] = 0x0;
+      cmd[4] = DIR_WRITE;
+      cmd[5] = code;
+      cmd[6] = fp.pad[3];
+      cmd[7] = fp.pad[2];
+      cmd[8] = fp.pad[1];
+      cmd[9] = fp.pad[0];
+      cmd[10] = checkSum(cmd,10);
+      if(m_Skt)
+      {
+        m_Skt->SendBuf(cmd,11);
+      }
+}
 void __fastcall TForm1::lbledt_int1DblClick(TObject *Sender)
 {
      ReadParam(CMD_READ_INT1);
@@ -163,13 +217,18 @@ void __fastcall TForm1::DealData(TCommMsg* msg)
         {
            lbledt_fl4->Text = msg->param.f32_val;
         }
-        else if(msg->cmd == CMD_READ_DATE)
+        else if( (msg->cmd == CMD_READ_DATE)  || (msg->cmd == CMD_READ_TIME))
         {
-           lbledt_date->Text = msg->param.u32_val;
-        }
-        else if(msg->cmd == CMD_READ_TIME)
-        {
-           lbledt_time->Text = msg->param.u32_val;
+           TZipDateTimeDef zdt;
+           zdt.value = msg->param.u32_val;
+           AnsiString tmp;
+
+           tmp.printf("%04d-%02d-%02d",zdt.dt.year,zdt.dt.mon,zdt.dt.day) ;
+           lbledt_date->Text = tmp;
+
+           tmp = "";
+           tmp.printf("%02d:%02d:%02d",zdt.dt.hour,zdt.dt.min,zdt.dt.sec) ;
+           lbledt_time->Text = tmp;
         }
     }
 }
@@ -327,4 +386,85 @@ void __fastcall TForm1::lbledt_int4KeyUp(TObject *Sender, WORD &Key,
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TForm1::lbledt_fl1KeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+      if(Key == 13)
+      {
+          WriteFloatParam(CMD_READ_FLOAT1, lbledt_fl1->Text.ToDouble());
+          lbledt_fl1->Clear();
+          ReadParam(CMD_READ_FLOAT1);
+      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_fl2KeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+      if(Key == 13)
+      {
+          WriteFloatParam(CMD_READ_FLOAT2, lbledt_fl2->Text.ToDouble());
+          lbledt_fl2->Clear();
+          ReadParam(CMD_READ_FLOAT2);
+      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_fl3KeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+       if(Key == 13)
+      {
+          WriteFloatParam(CMD_READ_FLOAT3, lbledt_fl3->Text.ToDouble());
+          lbledt_fl3->Clear();
+          ReadParam(CMD_READ_FLOAT3);
+      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_fl4KeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+      if(Key == 13)
+      {
+          WriteFloatParam(CMD_READ_FLOAT4, lbledt_fl4->Text.ToDouble());
+          lbledt_fl4->Clear();
+          ReadParam(CMD_READ_FLOAT4);
+      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::N2Click(TObject *Sender)
+{
+      TZipDateTimeDef zdt;
+      struct  date d;
+      struct  time t;
+      getdate(&d);
+      gettime(&t);
+
+      zdt.dt.year = d.da_year-2000;
+      zdt.dt.mon  = d.da_mon;
+      zdt.dt.day  = d.da_day;
+      zdt.dt.hour  = t.ti_hour;
+      zdt.dt.min  = t.ti_min;
+      zdt.dt.sec  = t.ti_sec;
+
+      WriteIntParam(CMD_READ_DATE,zdt.value);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_dateKeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+     ReadParam(CMD_READ_DATE);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_timeKeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+    ReadParam(CMD_READ_TIME);
+}
+//---------------------------------------------------------------------------
 

@@ -1,8 +1,8 @@
 object Form1: TForm1
   Left = 376
   Top = 161
-  Width = 380
-  Height = 478
+  Width = 382
+  Height = 498
   Caption = 'Form1'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -10,6 +10,7 @@ object Form1: TForm1
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  Menu = mm1
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
@@ -118,6 +119,7 @@ object Form1: TForm1
       LabelSpacing = 3
       TabOrder = 4
       OnDblClick = lbledt_fl1DblClick
+      OnKeyUp = lbledt_fl1KeyUp
     end
     object lbledt_fl2: TLabeledEdit
       Left = 168
@@ -131,6 +133,7 @@ object Form1: TForm1
       LabelSpacing = 3
       TabOrder = 5
       OnDblClick = lbledt_fl2DblClick
+      OnKeyUp = lbledt_fl2KeyUp
     end
     object lbledt_fl3: TLabeledEdit
       Left = 168
@@ -144,6 +147,7 @@ object Form1: TForm1
       LabelSpacing = 3
       TabOrder = 6
       OnDblClick = lbledt_fl3DblClick
+      OnKeyUp = lbledt_fl3KeyUp
     end
     object lbledt_fl4: TLabeledEdit
       Left = 168
@@ -157,6 +161,7 @@ object Form1: TForm1
       LabelSpacing = 3
       TabOrder = 7
       OnDblClick = lbledt_fl4DblClick
+      OnKeyUp = lbledt_fl4KeyUp
     end
     object lbledt_date: TLabeledEdit
       Left = 32
@@ -170,6 +175,7 @@ object Form1: TForm1
       LabelSpacing = 3
       TabOrder = 8
       OnDblClick = lbledt_dateDblClick
+      OnKeyUp = lbledt_dateKeyUp
     end
     object lbledt_time: TLabeledEdit
       Left = 168
@@ -183,6 +189,7 @@ object Form1: TForm1
       LabelSpacing = 3
       TabOrder = 9
       OnDblClick = lbledt_timeDblClick
+      OnKeyUp = lbledt_timeKeyUp
     end
   end
   object skt: TClientSocket
@@ -194,5 +201,16 @@ object Form1: TForm1
     OnRead = sktRead
     Left = 200
     Top = 24
+  end
+  object mm1: TMainMenu
+    Left = 216
+    Top = 136
+    object N1: TMenuItem
+      Caption = #25805#20316
+      object N2: TMenuItem
+        Caption = #21516#27493#26102#38388
+        OnClick = N2Click
+      end
+    end
   end
 end
