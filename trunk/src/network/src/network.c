@@ -361,14 +361,48 @@ void phy_reset(void)
 	
 }
 
-void init_param(void)
+u32_t  BUILD_IP( u32_t a, u32_t b,u32_t c,u32_t d)
 {
+	return  htonl(((u32_t)((a) & 0xff) << 24) | \
+                               ((u32_t)((b) & 0xff) << 16) | \
+                               ((u32_t)((c) & 0xff) << 8) | \
+                                (u32_t)((d) & 0xff))
+}
+static TNetConf  gNetConfig;
+static  TVarItem var_list[]={
+		{CMD_LOCAL_IP, sizeof(int),&gNetConfig.ip,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},	
+		{CMD_GATEWAY,sizeof(int),&gNetConfig.netmask,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+		{CMD_NETMASK,sizeof(int),&gNetConfig.gateway,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
+}
 
+void net_var_init(void)
+{
+	static struct Param_Device*  fm25l16_dev = NULL;
+	fm25l16_dev = Param_dev_Request(DEV_FM25L16);
+	if(fm25l16_dev)
+	{
+		gNetConfig.ip 		= Param_ReadInteger(fm25l16_dev ,GET_OFFSET(CMD_LOCAL_IP),0);
+		gNetConfig.netmask= Param_ReadInteger(fm25l16_dev ,GET_OFFSET(CMD_NETMASK),0);
+		gNetConfig.gateway= Param_ReadInteger(fm25l16_dev ,GET_OFFSET(CMD_GATEWAY),0);
+	}
+	
+	RegisterAutoVarList(var_list,ARRAY_SIZE(var_list));
+	
+}
+void network_restore_def(void)
+{
+	static struct Param_Device*  fm25l16_dev = NULL;
+	fm25l16_dev = Param_dev_Request(DEV_FM25L16);
+
+	Param_WriteInteger(fm25l16_dev ,GET_OFFSET(CMD_LOCAL_IP), BUILD_IP(IP_ADDR0,IP_ADDR1,IP_ADDR2,IP_ADDR3));
+	Param_WriteInteger(fm25l16_dev ,GET_OFFSET(CMD_NETMASK),BUILD_IP(NETMASK_ADDR0,NETMASK_ADDR1,NETMASK_ADDR2,NETMASK_ADDR3));
+	Param_WriteInteger(fm25l16_dev ,GET_OFFSET(CMD_GATEWAY),BUILD_IP(GW_ADDR0,GW_ADDR1,GW_ADDR2,GW_ADDR3));
 }
 int network_init(void)
 {
 	DEBUG_FUNC();
 	//phy_reset();
+	net_var_init();
 	/* Setup STM32 system (clocks, Ethernet, GPIO, NVIC) and STM3210C-EVAL resources */
 	if(!System_Setup()){
 		net_init_ok = 0;
@@ -376,7 +410,7 @@ int network_init(void)
 	}
   
 	/* Initilaize the LwIP stack */
-	LwIP_Init();
+	LwIP_Init(&gNetConfig);
 	/* Infinite loop */
 
 	//return mongoo_start();

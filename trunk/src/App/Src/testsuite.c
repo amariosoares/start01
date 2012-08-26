@@ -39,6 +39,9 @@ const char send_text[] = {0xab,0xcd,0,1,2,3,4};
 #define CMBUS_RX 				1
 #define CMBUS_TX				0
 
+#define NET_RESTORE_KEY_MODE		GPIO_PORTE|GPIO_IN_FLOATING|GPIO_50MHZ|6
+#define NET_RESTORE_KEY		GPIO_NR(PE,6)
+
 
 #define ANYBUS_RESET_MODE 		GPIO_PORTD|GPIO_OUT_PP|GPIO_50MHZ|14
 #define ANYBUS_RESET_GPIO			GPIO_NR(PD,14)
@@ -138,6 +141,26 @@ void network_test(void)
 #endif
 #include "abcc.h"
 #include "appd.h"
+int  old_status = 0;
+u8  cnt_net_restore = 0;
+
+void NetConfig_Restore_Check(void)
+{
+	if( gpio_get_value(NET_RESTORE_KEY) ! = old_status)
+	{
+		cnt_net_restore++;
+		if(cnt_net_restore >= 5)
+		{
+			network_restore_def();
+			cnt_net_restore = 0;
+			old_status = gpio_get_value(NET_RESTORE_KEY) ;
+			RCC_APB1PeriphClockCmd(RCC_APB1Periph_WWDG, ENABLE);
+			WWDG_Enable(0x40);
+			while(1);
+		}
+	}
+	
+}
 void TestSuiteJob(void *tid , void * arg) 
 {
 	
@@ -151,6 +174,8 @@ if( ( ABCC_eAbccState == ABP_ANB_STATE_PROCESS_ACTIVE) )
  	APPD_iRefSpeed = spd++;
 	APPD_ProcessDataChanged();
 }
+	NetConfig_Restore_Check();
+
 #if 0
 	test_rtc();
 	test_fm25l16();
@@ -238,7 +263,7 @@ u8 test_cmd_parse(TDataChan *src,TCommMsg* msg)
 			
 		}
 
-	}else if(msg->cmd == DIR_WRITE){
+	}else if(msg->dir == DIR_WRITE){
 
 		if((msg->cmd == CMD_READ_TIME) || (msg->cmd == CMD_READ_DATE))
 		{
@@ -323,6 +348,8 @@ static int test_suite_init(void)
 
 	gpio_set_mode(CMBUS_RXTX_MODE);
 	gpio_set_mode(ANYBUS_RESET_MODE);
+	gpio_set_mode(NET_RESTORE_KEY_MODE);
+	 old_status = gpio_get_value(NET_RESTORE_KEY) ;
 
 	test_var_init();
 	return 1;

@@ -57,6 +57,9 @@ __published:	// IDE-managed Components
     TMainMenu *mm1;
     TMenuItem *N1;
     TMenuItem *N2;
+    TLabeledEdit *lbledt_localip;
+    TLabeledEdit *lbledt_netmask;
+    TLabeledEdit *lbledt_gateway;
     void __fastcall btnConnClick(TObject *Sender);
     void __fastcall sktConnect(TObject *Sender, TCustomWinSocket *Socket);
     void __fastcall sktDisconnect(TObject *Sender,
@@ -92,6 +95,15 @@ __published:	// IDE-managed Components
     void __fastcall lbledt_dateKeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
     void __fastcall lbledt_timeKeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall lbledt_localipDblClick(TObject *Sender);
+    void __fastcall lbledt_netmaskDblClick(TObject *Sender);
+    void __fastcall lbledt_gatewayDblClick(TObject *Sender);
+    void __fastcall lbledt_localipKeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall lbledt_netmaskKeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall lbledt_gatewayKeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
 
 private:	// User declarations
