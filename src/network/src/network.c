@@ -366,14 +366,14 @@ u32_t  BUILD_IP( u32_t a, u32_t b,u32_t c,u32_t d)
 	return  htonl(((u32_t)((a) & 0xff) << 24) | \
                                ((u32_t)((b) & 0xff) << 16) | \
                                ((u32_t)((c) & 0xff) << 8) | \
-                                (u32_t)((d) & 0xff))
+                                (u32_t)((d) & 0xff)) ;
 }
 static TNetConf  gNetConfig;
 static  TVarItem var_list[]={
 		{CMD_LOCAL_IP, sizeof(int),&gNetConfig.ip,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},	
 		{CMD_GATEWAY,sizeof(int),&gNetConfig.netmask,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
 		{CMD_NETMASK,sizeof(int),&gNetConfig.gateway,VAR_UPDATE_MEMORY|VAR_UPDATE_FLASH},
-}
+} ;
 
 void net_var_init(void)
 {

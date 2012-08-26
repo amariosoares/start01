@@ -146,7 +146,8 @@ u8  cnt_net_restore = 0;
 
 void NetConfig_Restore_Check(void)
 {
-	if( gpio_get_value(NET_RESTORE_KEY) ! = old_status)
+
+	if(gpio_get_value(NET_RESTORE_KEY)   != old_status)
 	{
 		cnt_net_restore++;
 		if(cnt_net_restore >= 5)
