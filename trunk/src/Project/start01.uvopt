@@ -1138,10 +1138,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>85</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>140</TopLine>
-      <CurrentLine>149</CurrentLine>
+      <TopLine>165</TopLine>
+      <CurrentLine>177</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\App\Src\testsuite.c</PathWithFileName>
       <FilenameWithoutPath>testsuite.c</FilenameWithoutPath>
@@ -2002,9 +2002,9 @@
       <Documents>
         <Doc>
           <Name>..\App\Src\testsuite.c</Name>
-          <ColumnNumber>39</ColumnNumber>
-          <TopLine>133</TopLine>
-          <CurrentLine>150</CurrentLine>
+          <ColumnNumber>85</ColumnNumber>
+          <TopLine>165</TopLine>
+          <CurrentLine>177</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\App\Src\DebugComm.c</Name>
