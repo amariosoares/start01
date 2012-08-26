@@ -78,15 +78,15 @@ void LwIP_Init(TNetConf* netconf)
   netmask.addr = 0;
   gw.addr = 0;
 #else
-if(netconf)
-{
-	ipaddr->ip 		= netconf->ip;
-	ipaddr->gateway	= netconf->gateway;
-	ipaddr->netmask	= netconf->netmask;
-	
-	//Set_MAC_Address(netconf->mac);
-	Set_MAC_Address(macaddress);
-}
+	if(netconf)
+	{
+		ipaddr.addr 	= netconf->ip;
+		netmask.addr	= netconf->gateway;
+		gw.addr		= netconf->netmask;
+		
+		//Set_MAC_Address(netconf->mac);
+		Set_MAC_Address(macaddress);
+	}
 #if 0
   IP4_ADDR(&ipaddr, IP_ADDR0, IP_ADDR1, IP_ADDR2, IP_ADDR3);
   IP4_ADDR(&netmask, NETMASK_ADDR0, NETMASK_ADDR1 , NETMASK_ADDR2, NETMASK_ADDR3);
