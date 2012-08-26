@@ -59,7 +59,7 @@ uint8_t LedToggle = 4;
   * @param  None
   * @retval None
   */
-void LwIP_Init(void)
+void LwIP_Init(TNetConf* netconf)
 {
   struct ip_addr ipaddr;
   struct ip_addr netmask;
@@ -78,12 +78,23 @@ void LwIP_Init(void)
   netmask.addr = 0;
   gw.addr = 0;
 #else
+if(netconf)
+{
+	ipaddr->ip 		= netconf->ip;
+	ipaddr->gateway	= netconf->gateway;
+	ipaddr->netmask	= netconf->netmask;
+	
+	//Set_MAC_Address(netconf->mac);
+	Set_MAC_Address(macaddress);
+}
+#if 0
   IP4_ADDR(&ipaddr, IP_ADDR0, IP_ADDR1, IP_ADDR2, IP_ADDR3);
   IP4_ADDR(&netmask, NETMASK_ADDR0, NETMASK_ADDR1 , NETMASK_ADDR2, NETMASK_ADDR3);
   IP4_ADDR(&gw, GW_ADDR0, GW_ADDR1, GW_ADDR2, GW_ADDR3);
 #endif
 
-  Set_MAC_Address(macaddress);
+#endif
+
 
   /* - netif_add(struct netif *netif, struct ip_addr *ipaddr,
             struct ip_addr *netmask, struct ip_addr *gw,

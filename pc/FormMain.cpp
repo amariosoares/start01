@@ -24,15 +24,20 @@ typedef enum{
 }TCmdDir;
 typedef enum{
 	CMD_READ_INT1=0,
-    CMD_READ_INT2,
-    CMD_READ_INT3,
-    CMD_READ_INT4,
-    CMD_READ_FLOAT1,
-    CMD_READ_FLOAT2,
-    CMD_READ_FLOAT3,
-    CMD_READ_FLOAT4,
-    CMD_READ_DATE,
-    CMD_READ_TIME
+	CMD_READ_INT2,
+	CMD_READ_INT3,
+	CMD_READ_INT4,
+	CMD_READ_FLOAT1,
+	CMD_READ_FLOAT2,
+	CMD_READ_FLOAT3,
+	CMD_READ_FLOAT4,
+	CMD_READ_DATE,
+    CMD_READ_TIME ,		//设备的时间 	
+	CMD_LOCAL_IP,		
+	CMD_LOCAL_PORT,
+	CMD_GATEWAY,
+	CMD_NETMASK,
+	CMD_MAC,
 }TCmdType;
 
 typedef struct{
@@ -181,6 +186,12 @@ void __fastcall TForm1::lbledt_int1DblClick(TObject *Sender)
 {
      ReadParam(CMD_READ_INT1);
 }
+AnsiString convert2ip(UINT32 ip)
+{
+     AnsiString tmp;
+     tmp.printf("%d.%d.%d.%d",(ip>>24)&0xff,(ip>>16)&0xff,(ip>>8)&0xff,(ip)&0xff);
+     return tmp;
+}
 void __fastcall TForm1::DealData(TCommMsg* msg)
 {
     //if(msg->dir == DIR_READ)
@@ -229,6 +240,16 @@ void __fastcall TForm1::DealData(TCommMsg* msg)
            tmp = "";
            tmp.printf("%02d:%02d:%02d",zdt.dt.hour,zdt.dt.min,zdt.dt.sec) ;
            lbledt_time->Text = tmp;
+        }
+        else if(msg->cmd == CMD_LOCAL_IP)
+        {
+           lbledt_localip->Text = convert2ip(msg->param.u32_val);
+        } else if(msg->cmd == CMD_NETMASK)
+        {
+           lbledt_netmask->Text = convert2ip(msg->param.u32_val);
+        } else if(msg->cmd == CMD_GATEWAY)
+        {
+           lbledt_gateway->Text = convert2ip(msg->param.u32_val);
         }
     }
 }
@@ -465,6 +486,65 @@ void __fastcall TForm1::lbledt_timeKeyUp(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
     ReadParam(CMD_READ_TIME);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_localipDblClick(TObject *Sender)
+{
+   ReadParam(CMD_LOCAL_IP);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_netmaskDblClick(TObject *Sender)
+{
+    ReadParam(CMD_NETMASK);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_gatewayDblClick(TObject *Sender)
+{
+   ReadParam(CMD_GATEWAY);
+}
+//---------------------------------------------------------------------------
+UINT32 convert_ip(AnsiString ip)
+{
+     UINT32 tmp = inet_addr(ip.c_str());
+     return  tmp;
+}
+void __fastcall TForm1::lbledt_localipKeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+     if(Key == 13)
+      {
+          WriteIntParam(CMD_LOCAL_IP, convert_ip(lbledt_localip->Text));
+          lbledt_localip->Clear();
+          ReadParam(CMD_LOCAL_IP);
+      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_netmaskKeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+       if(Key == 13)
+      {
+          WriteIntParam(CMD_NETMASK, convert_ip(lbledt_netmask->Text));
+          lbledt_netmask->Clear();
+          ReadParam(CMD_NETMASK);
+      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lbledt_gatewayKeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+      if(Key == 13)
+      {
+
+          WriteIntParam(CMD_GATEWAY, convert_ip(lbledt_gateway->Text));
+          lbledt_gateway->Clear();
+          ReadParam(CMD_GATEWAY);
+      }
 }
 //---------------------------------------------------------------------------
 

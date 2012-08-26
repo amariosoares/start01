@@ -31,7 +31,13 @@
    
    
 /* Includes ------------------------------------------------------------------*/
-void LwIP_Init(void);
+typedef struct _NetConf{
+	uint32_t ip;
+	uint32_t netmask;
+	uint32_t gateway;
+	uint8_t   mac[6];
+}TNetConf;
+void LwIP_Init(TNetConf* netconf);
 void LwIP_Pkt_Handle(void);
 void LwIP_Periodic_Handle(__IO uint32_t localtime);
 void Display_Periodic_Handle(__IO uint32_t localtime);

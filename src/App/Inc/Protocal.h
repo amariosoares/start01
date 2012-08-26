@@ -20,6 +20,9 @@ typedef enum {
 	CMD_NET_SEND_AD, //通过网络发送波形
 	CMD_LOCAL_IP,		
 	CMD_LOCAL_PORT,
+	CMD_GATEWAY,
+	CMD_NETMASK,
+	CMD_MAC,
 	CMD_UDP_IP,
 	CMD_UDP_PORT,
 	CMD_MAX,

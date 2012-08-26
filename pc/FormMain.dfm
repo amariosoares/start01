@@ -1,8 +1,8 @@
 object Form1: TForm1
-  Left = 376
-  Top = 161
-  Width = 382
-  Height = 498
+  Left = 374
+  Top = 81
+  Width = 423
+  Height = 608
   Caption = 'Form1'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -45,10 +45,10 @@ object Form1: TForm1
     end
   end
   object grp2: TGroupBox
-    Left = 16
+    Left = 24
     Top = 144
-    Width = 329
-    Height = 281
+    Width = 337
+    Height = 377
     Caption = #21442#25968#65306
     TabOrder = 1
     object lbledt_int1: TLabeledEdit
@@ -190,6 +190,48 @@ object Form1: TForm1
       TabOrder = 9
       OnDblClick = lbledt_timeDblClick
       OnKeyUp = lbledt_timeKeyUp
+    end
+    object lbledt_localip: TLabeledEdit
+      Left = 32
+      Top = 288
+      Width = 121
+      Height = 21
+      EditLabel.Width = 49
+      EditLabel.Height = 13
+      EditLabel.Caption = #35774#22791'IP'#65306' '
+      LabelPosition = lpAbove
+      LabelSpacing = 3
+      TabOrder = 10
+      OnDblClick = lbledt_localipDblClick
+      OnKeyUp = lbledt_localipKeyUp
+    end
+    object lbledt_netmask: TLabeledEdit
+      Left = 168
+      Top = 288
+      Width = 121
+      Height = 21
+      EditLabel.Width = 42
+      EditLabel.Height = 13
+      EditLabel.Caption = #32593#20851#65306'  '
+      LabelPosition = lpAbove
+      LabelSpacing = 3
+      TabOrder = 11
+      OnDblClick = lbledt_netmaskDblClick
+      OnKeyUp = lbledt_netmaskKeyUp
+    end
+    object lbledt_gateway: TLabeledEdit
+      Left = 32
+      Top = 328
+      Width = 121
+      Height = 21
+      EditLabel.Width = 66
+      EditLabel.Height = 13
+      EditLabel.Caption = #23376#32593#25513#30721#65306'  '
+      LabelPosition = lpAbove
+      LabelSpacing = 3
+      TabOrder = 12
+      OnDblClick = lbledt_gatewayDblClick
+      OnKeyUp = lbledt_gatewayKeyUp
     end
   end
   object skt: TClientSocket
