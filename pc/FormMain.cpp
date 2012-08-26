@@ -189,7 +189,7 @@ void __fastcall TForm1::lbledt_int1DblClick(TObject *Sender)
 AnsiString convert2ip(UINT32 ip)
 {
      AnsiString tmp;
-     tmp.printf("%d.%d.%d.%d",(ip>>24)&0xff,(ip>>16)&0xff,(ip>>8)&0xff,(ip)&0xff);
+     tmp.printf("%d.%d.%d.%d",(ip)&0xff,(ip>>8)&0xff,(ip>>16)&0xff,(ip>>24)&0xff);
      return tmp;
 }
 void __fastcall TForm1::DealData(TCommMsg* msg)
